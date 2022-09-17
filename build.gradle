@@ -1,0 +1,27 @@
+plugins {
+    id 'com.github.johnrengelman.shadow' version '7.1.2'
+    id 'java'
+}
+
+group 'dev.yive.tebexhook'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation group: 'io.javalin', name: 'javalin', version: '4.6.4'
+    implementation group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.31'
+    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.13.3'
+    implementation group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-yaml', version: '2.13.4'
+}
+
+jar {
+    manifest {
+        attributes(
+                'Class-Path': configurations.runtimeClasspath.files.collect { it.getName() }.join(' '),
+                'Main-Class': 'dev.yive.tebexhook.Main'
+        )
+    }
+}

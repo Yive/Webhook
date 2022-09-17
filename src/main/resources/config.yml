@@ -1,0 +1,97 @@
+# Configuration for MineSuperior's Tebex Hook
+# IP to be bound to
+ip: "127.0.0.1"
+# Port to listen on
+port: "7070"
+
+# Options to be used to validate Tebex requests
+tebex:
+  # Webhook key from Tebex to validate requests
+  key: ""
+  # IPs that Tebex send requests from.
+  ips:
+    - "18.209.80.3"
+    - "54.87.231.232"
+
+discord:
+  # Sends embeds instead of just text messages
+  embeds: true
+  # Webhook URL to send messages to
+  url: ""
+
+# Gateways that listen to Tebex requests
+disputes:
+  # If a dispute is closed
+  closed:
+    # Should we listen for when Tebex sends these post requests
+    enabled: true
+    discord:
+      # Used to overwrite the global url
+      url: ""
+  # If a dispute is lost
+  lost:
+    # Should we listen for when Tebex sends these post requests
+    enabled: true
+    discord:
+      # Used to overwrite the global url
+      url: ""
+  # If a dispute is opened
+  opened:
+    # Should we listen for when Tebex sends these post requests
+    enabled: true
+    discord:
+      # Used to overwrite the global url
+      url: ""
+  # If a dispute is won
+  won:
+    # Should we listen for when Tebex sends these post requests
+    enabled: true
+    discord:
+      # Used to overwrite the global url
+      url: ""
+
+payments:
+  # If a payment was completed
+  complete:
+    # Should we listen for when Tebex sends these post requests
+    enabled: true
+    discord:
+      # Used to overwrite the global url
+      url: ""
+  # If a payment was declined
+  declined:
+    # Should we listen for when Tebex sends these post requests
+    enabled: true
+    discord:
+      # Used to overwrite the global url
+      url: ""
+  # If a payment was refunded
+  refunded:
+    # Should we listen for when Tebex sends these post requests
+    enabled: true
+    discord:
+      # Used to overwrite the global url
+      url: ""
+
+recurring:
+  # If a recurring payment has ended
+  ended:
+    # Should we listen for when Tebex sends these post requests
+    enabled: true
+    discord:
+      # Used to overwrite the global url
+      url: ""
+  # If a recurring payment has been renewed
+  renewed:
+    # Should we listen for when Tebex sends these post requests
+    enabled: true
+    discord:
+      # Used to overwrite the global url
+      url: ""
+  # If a recurring payment has started
+  started:
+    # Should we listen for when Tebex sends these post requests
+    enabled: true
+    discord:
+      # Used to overwrite the global url
+      url: ""
