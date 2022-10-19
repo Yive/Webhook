@@ -43,9 +43,6 @@ public class PaymentDisputeLostHandler implements Handler {
         for (GiftCard card : subject.getGift_cards()) {
             giftCardsPrice = giftCardsPrice + card.getAmount().getAmount();
         }
-        double original = paidPrice;
-        paidPrice = paidPrice - (original * 0.0247);
-        paidPrice = paidPrice - (original * 0.05);
         embed.setColor(Math.max(0, Math.max(0, paidPrice - giftCardsPrice)) > 0 ? Color.RED.getRGB() : Color.GRAY.getRGB());
         WebhookBody body = new WebhookBody();
         //body.setComponents(Collections.singletonList(DiscordUtils.createComponents(subject)));

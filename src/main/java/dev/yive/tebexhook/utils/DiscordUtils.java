@@ -49,7 +49,7 @@ public class DiscordUtils {
 
         Username username = subject.getCustomer().getUsername();
         Footer footer = new Footer();
-        footer.setText("Revenue: $" + String.format("%.2f", Math.max(0, paidPrice)) + "\nBuyer IGN: " + username.getUsername() + "\nBuyer UUID: " + username.getId() + "\nID: " + subject.getTransaction_id());
+        footer.setText("Revenue: $" + String.format("%.2f", Math.max(0, paidPrice)) + "\nBuyer IGN: " + username.getUsername() + "\nBuyer UUID: " + username.getId() + "\nID: " + subject.getTransaction_id() + "\nTebexWebhook v1.0.1");
         footer.setIcon_url("https://crafthead.net/helm/" + username.getId() + ".png");
         embed.setFooter(footer);
 
