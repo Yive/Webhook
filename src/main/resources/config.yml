@@ -4,6 +4,20 @@ ip: "127.0.0.1"
 # Port to listen on
 port: "7070"
 
+# Options to be used to validate Spiget requests
+spiget:
+  # ID given to the webhook when registered
+  id: ""
+  # Secret for when you want to unregister the webhook from Spiget
+  secret: ""
+  # Discord webhook URL to send messages to
+  discord: ""
+  # Resources that we will listen for updates
+  resources:
+    - "9089"
+    - "28140"
+    - "96927"
+
 # Options to be used to validate Tebex requests
 tebex:
   # Webhook key from Tebex to validate requests

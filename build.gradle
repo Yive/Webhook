@@ -3,17 +3,16 @@ plugins {
     id 'java'
 }
 
-group 'dev.yive.tebexhook'
-version '1.0.1'
+group 'dev.yive.webhook'
+version '1.1.0'
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    implementation group: 'io.javalin', name: 'javalin', version: '4.6.4'
-    implementation group: 'org.slf4j', name: 'slf4j-simple', version: '1.7.31'
-    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind', version: '2.13.3'
+    implementation group: 'io.javalin', name: 'javalin', version: '5.1.1'
+    implementation group: 'org.slf4j', name: 'slf4j-simple', version: '2.0.3'
     implementation group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-yaml', version: '2.13.4'
 }
 
@@ -21,7 +20,7 @@ jar {
     manifest {
         attributes(
                 'Class-Path': configurations.runtimeClasspath.files.collect { it.getName() }.join(' '),
-                'Main-Class': 'dev.yive.tebexhook.Main'
+                'Main-Class': 'dev.yive.webhook.Main'
         )
     }
 }
