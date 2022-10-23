@@ -6,6 +6,7 @@ import dev.yive.webhook.Main;
 import dev.yive.webhook.json.codes.GiftCard;
 import dev.yive.webhook.json.discord.WebhookBody;
 import dev.yive.webhook.json.discord.embed.Embed;
+import dev.yive.webhook.json.misc.Fees;
 import dev.yive.webhook.json.products.Price;
 import dev.yive.webhook.json.products.Product;
 import dev.yive.webhook.json.subjects.PaymentSubject;
@@ -44,9 +45,9 @@ public class PaymentDisputeLostHandler implements Handler {
         for (GiftCard card : subject.getGift_cards()) {
             giftCardsPrice = giftCardsPrice + card.getAmount().getAmount();
         }
-        for (Price fee : subject.getFees()) {
-            paidPrice = paidPrice - fee.getAmount();
-        }
+        Fees fees = subject.getFees();
+        paidPrice = paidPrice - fees.getTax().getAmount();
+        paidPrice = paidPrice - fees.getGateway().getAmount();
         embed.setColor(Math.round(Math.max(0, Math.max(0, paidPrice - giftCardsPrice)) * 100.0) / 100.0 > 0 ? Color.RED.getRGB() : Color.GRAY.getRGB());
         WebhookBody body = new WebhookBody();
         //body.setComponents(Collections.singletonList(DiscordUtils.createComponents(subject)));

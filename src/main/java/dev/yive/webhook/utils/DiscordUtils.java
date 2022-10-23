@@ -14,6 +14,7 @@ import dev.yive.webhook.json.spiget.ResourceUpdate;
 import dev.yive.webhook.json.spiget.Version;
 import dev.yive.webhook.json.subjects.PaymentSubject;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -53,7 +54,7 @@ public class DiscordUtils {
 
         Username username = subject.getCustomer().getUsername();
         Footer footer = new Footer();
-        footer.setText("Revenue: $" + String.format("%.2f", Math.max(0, paidPrice)) + "\nBuyer IGN: " + username.getUsername() + "\nBuyer UUID: " + username.getId() + "\nID: " + subject.getTransaction_id() + "\nWebhook v1.1.0");
+        footer.setText("Revenue: $" + String.format("%.2f", Math.max(0, paidPrice)) + "\nBuyer IGN: " + username.getUsername() + "\nBuyer UUID: " + username.getId() + "\nID: " + subject.getTransaction_id() + "\nWebhook v1.1.2");
         footer.setIcon_url("https://crafthead.net/helm/" + username.getId() + ".png");
         embed.setFooter(footer);
 
@@ -66,19 +67,23 @@ public class DiscordUtils {
 
         Data data = update.getData();
         embed.setTitle(data.getName());
-        embed.setDescription("Update detected");
         embed.setUrl("https://www.spigotmc.org/resources/" + data.getId() + "/update?update=" + data.getUpdateId());
+        embed.setColor(new Color(255, 222, 0).getRGB());
 
         Media media = new Media();
         String url = data.getIcon().getUrl();
-        media.setUrl(url == null || url.isEmpty() ? "https://static.spigotmc.org/styles/spigot/xenresource/resource_icon.png" : "https://www.spigotmc.org" + url);
+        media.setUrl(url == null || url.isEmpty() ? "https://static.spigotmc.org/styles/spigot/xenresource/resource_icon.png" : "https://www.spigotmc.org/" + url);
         embed.setThumbnail(media);
 
         Field field = new Field();
         field.setName("Version");
         field.setValue(data.getVersion().getName());
-        embed.setFields(Collections.singletonList(field));
 
+        Footer footer = new Footer();
+        footer.setText("Webhook v1.1.2");
+        embed.setFooter(footer);
+
+        embed.setFields(Collections.singletonList(field));
         return embed;
     }
 

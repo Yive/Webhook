@@ -1,6 +1,7 @@
 package dev.yive.webhook.json.subjects;
 
 import dev.yive.webhook.json.customer.Customer;
+import dev.yive.webhook.json.misc.Fees;
 import dev.yive.webhook.json.products.Price;
 import dev.yive.webhook.json.products.Product;
 import dev.yive.webhook.json.misc.Status;
@@ -14,12 +15,13 @@ public class PaymentSubject {
     private String payment_sequence;
     private String created_at;
     private Price price;
-    private List<Price> fees;
+    private Fees fees;
     private Customer customer;
     private List<Product> products;
     private List<Object> coupons;
     private List<GiftCard> gift_cards;
     private String recurring_payment_reference;
+    private Object custom;
 
     public String getTransaction_id() {
         return transaction_id;
@@ -61,11 +63,11 @@ public class PaymentSubject {
         this.price = price;
     }
 
-    public List<Price> getFees() {
+    public Fees getFees() {
         return fees;
     }
 
-    public void setFees(List<Price> fees) {
+    public void setFees(Fees fees) {
         this.fees = fees;
     }
 
@@ -107,5 +109,13 @@ public class PaymentSubject {
 
     public void setRecurring_payment_reference(String recurring_payment_reference) {
         this.recurring_payment_reference = recurring_payment_reference;
+    }
+
+    public Object getCustom() {
+        return custom;
+    }
+
+    public void setCustom(Object custom) {
+        this.custom = custom;
     }
 }
