@@ -7,7 +7,6 @@ import dev.yive.webhook.json.codes.GiftCard;
 import dev.yive.webhook.json.discord.WebhookBody;
 import dev.yive.webhook.json.discord.embed.Embed;
 import dev.yive.webhook.json.misc.Fees;
-import dev.yive.webhook.json.products.Price;
 import dev.yive.webhook.json.products.Product;
 import dev.yive.webhook.json.subjects.PaymentSubject;
 import dev.yive.webhook.json.validation.ValidationPayment;

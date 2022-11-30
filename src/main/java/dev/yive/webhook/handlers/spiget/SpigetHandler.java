@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.yive.webhook.Main;
 import dev.yive.webhook.json.discord.WebhookBody;
-import dev.yive.webhook.json.discord.embed.Embed;
 import dev.yive.webhook.json.spiget.ResourceUpdate;
 import dev.yive.webhook.utils.DiscordUtils;
 import dev.yive.webhook.utils.WebUtil;
@@ -13,7 +12,6 @@ import io.javalin.http.Context;
 import io.javalin.http.Handler;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
 import java.util.Collections;
 
 public class SpigetHandler implements Handler {

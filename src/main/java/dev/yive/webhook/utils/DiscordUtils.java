@@ -11,7 +11,6 @@ import dev.yive.webhook.json.discord.embed.Media;
 import dev.yive.webhook.json.products.Product;
 import dev.yive.webhook.json.spiget.Data;
 import dev.yive.webhook.json.spiget.ResourceUpdate;
-import dev.yive.webhook.json.spiget.Version;
 import dev.yive.webhook.json.subjects.PaymentSubject;
 
 import java.awt.*;
@@ -54,8 +53,8 @@ public class DiscordUtils {
 
         Username username = subject.getCustomer().getUsername();
         Footer footer = new Footer();
-        footer.setText("Revenue: $" + String.format("%.2f", Math.max(0, paidPrice)) + "\nBuyer IGN: " + username.getUsername() + "\nBuyer UUID: " + username.getId() + "\nID: " + subject.getTransaction_id() + "\nWebhook v1.1.2");
-        footer.setIcon_url("https://crafthead.net/helm/" + username.getId() + ".png");
+        footer.setText("Revenue: $" + String.format("%.2f", Math.max(0, paidPrice)) + "\nBuyer IGN: " + username.getUsername() + "\nBuyer UUID: " + username.getId() + "\nID: " + subject.getTransaction_id() + "\nWebhook v1.1.3");
+        footer.setIcon_url("https://crafthead.net/helm/" + username.getId() + "/16.png");
         embed.setFooter(footer);
 
         return embed;
@@ -80,7 +79,7 @@ public class DiscordUtils {
         field.setValue(data.getVersion().getName());
 
         Footer footer = new Footer();
-        footer.setText("Webhook v1.1.2");
+        footer.setText("Webhook v1.1.3");
         embed.setFooter(footer);
 
         embed.setFields(Collections.singletonList(field));
