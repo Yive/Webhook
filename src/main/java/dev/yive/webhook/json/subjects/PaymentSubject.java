@@ -2,6 +2,7 @@ package dev.yive.webhook.json.subjects;
 
 import dev.yive.webhook.json.customer.Customer;
 import dev.yive.webhook.json.misc.Fees;
+import dev.yive.webhook.json.misc.PaymentMethod;
 import dev.yive.webhook.json.products.Price;
 import dev.yive.webhook.json.products.Product;
 import dev.yive.webhook.json.misc.Status;
@@ -15,6 +16,7 @@ public class PaymentSubject {
     private String payment_sequence;
     private String created_at;
     private Price price;
+    private PaymentMethod payment_method;
     private Fees fees;
     private Customer customer;
     private List<Product> products;
@@ -61,6 +63,14 @@ public class PaymentSubject {
 
     public void setPrice(Price price) {
         this.price = price;
+    }
+
+    public PaymentMethod getPayment_method() {
+        return payment_method;
+    }
+
+    public void setPayment_method(PaymentMethod payment_method) {
+        this.payment_method = payment_method;
     }
 
     public Fees getFees() {
