@@ -1,22 +1,13 @@
 package dev.yive.webhook.json.customer;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Username {
     private String id;
     private String username;
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
 }

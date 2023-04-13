@@ -2,8 +2,6 @@ package dev.yive.webhook.utils;
 
 import dev.yive.webhook.json.codes.GiftCard;
 import dev.yive.webhook.json.customer.Username;
-import dev.yive.webhook.json.discord.component.Button;
-import dev.yive.webhook.json.discord.component.Components;
 import dev.yive.webhook.json.discord.embed.Embed;
 import dev.yive.webhook.json.discord.embed.Field;
 import dev.yive.webhook.json.discord.embed.Footer;
@@ -15,7 +13,6 @@ import dev.yive.webhook.json.subjects.PaymentSubject;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 
 public class DiscordUtils {
@@ -84,27 +81,5 @@ public class DiscordUtils {
 
         embed.setFields(Collections.singletonList(field));
         return embed;
-    }
-
-    public static Components createComponents(PaymentSubject subject) {
-        Components components = new Components();
-        components.setType(1);
-
-        Button transaction = new Button();
-        transaction.setType(2);
-        transaction.setStyle(5);
-        transaction.setDisabled(false);
-        transaction.setLabel("View Transaction");
-        transaction.setUrl("https://server.tebex.io/search/" + subject.getTransaction_id() + "/payments");
-
-        Button buyer = new Button();
-        buyer.setType(2);
-        buyer.setStyle(5);
-        buyer.setDisabled(false);
-        buyer.setLabel("View Buyer");
-        buyer.setUrl("https://server.tebex.io/lookup/" + subject.getCustomer().getUsername().getId());
-
-        components.setComponents(Arrays.asList(transaction, buyer));
-        return components;
     }
 }

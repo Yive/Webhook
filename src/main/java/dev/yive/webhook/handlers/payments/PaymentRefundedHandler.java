@@ -49,7 +49,6 @@ public class PaymentRefundedHandler implements Handler {
         paidPrice = paidPrice - fees.getGateway().getAmount();
         embed.setColor(Math.round(Math.max(0, Math.max(0, paidPrice - giftCardsPrice)) * 100.0) / 100.0 > 0 ? Color.WHITE.getRGB() : Color.GRAY.getRGB());
         WebhookBody body = new WebhookBody();
-        //body.setComponents(Collections.singletonList(DiscordUtils.createComponents(subject)));
         body.setEmbeds(Collections.singletonList(embed));
 
         ObjectMapper mapper = new ObjectMapper();
