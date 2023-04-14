@@ -34,7 +34,7 @@ public class Main {
         try {
             config = mapper.readValue(new File("config.yml"), Config.class);
         } catch (Exception e) {
-            e.printStackTrace();
+            JavalinLogger.error("Failed to load config.yml", e);
             return;
         }
 
@@ -42,6 +42,10 @@ public class Main {
 
         Tebex tebex = config.getTebex();
         ValidationHandler.TEBEX_IPS.addAll(tebex.getIps());
+        if (ValidationHandler.TEBEX_IPS.isEmpty()) {
+            JavalinLogger.error("No IPs found in config.yml");
+            return;
+        }
 
         Javalin javalin = Javalin.create().start(7070);
         Runtime.getRuntime().addShutdownHook(new Thread(javalin::stop));

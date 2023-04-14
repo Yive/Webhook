@@ -1,5 +1,7 @@
 package dev.yive.webhook.utils;
 
+import io.javalin.util.JavalinLogger;
+
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -29,7 +31,7 @@ public class WebUtil {
                     builder.append(responseLine.trim());
                 }
                 if (builder.isEmpty()) return;
-                System.out.println(builder);
+                JavalinLogger.info(builder.toString());
             }
             connection.disconnect();
         } catch (Exception e) {

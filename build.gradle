@@ -5,7 +5,7 @@ plugins {
 }
 
 group 'dev.yive.webhook'
-version '1.1.5'
+version '1.1.6'
 
 repositories {
     mavenCentral()
@@ -16,7 +16,9 @@ dependencies {
     implementation group: 'org.slf4j', name: 'slf4j-simple', version: '2.0.6'
     implementation group: 'com.fasterxml.jackson.dataformat', name: 'jackson-dataformat-yaml', version: '2.14.2'
 }
-
+shadowJar {
+    archiveFileName = "webhook.jar"
+}
 jar {
     manifest {
         attributes(

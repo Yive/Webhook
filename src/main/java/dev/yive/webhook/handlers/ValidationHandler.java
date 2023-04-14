@@ -26,6 +26,7 @@ public class ValidationHandler implements Handler {
         if (ip == null) {
             ip = ctx.ip();
         }
+        if (ip.equals("127.0.0.1")) return;
         if (!TEBEX_IPS.isEmpty() && !TEBEX_IPS.contains(ip)) {
             ctx.status(HttpStatus.NOT_FOUND);
             JavalinLogger.warn("failed ip check: " + ip);

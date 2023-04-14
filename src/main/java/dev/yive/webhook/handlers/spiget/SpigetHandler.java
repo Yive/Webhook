@@ -10,6 +10,7 @@ import dev.yive.webhook.utils.WebUtil;
 import dev.yive.webhook.yaml.Spiget;
 import io.javalin.http.Context;
 import io.javalin.http.Handler;
+import io.javalin.util.JavalinLogger;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
@@ -28,8 +29,8 @@ public class SpigetHandler implements Handler {
             mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
             WebUtil.sendRequest(spiget.getDiscord(), mapper.writeValueAsString(body));
         } catch (Exception e) {
-            e.printStackTrace();
-            System.out.println(ctx.body());
+            JavalinLogger.error("Error while handling Spiget webhook", e);
+            JavalinLogger.info(ctx.body());
         }
     }
 }
