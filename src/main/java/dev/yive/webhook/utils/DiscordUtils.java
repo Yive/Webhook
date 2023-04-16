@@ -11,7 +11,6 @@ import dev.yive.webhook.json.spiget.Data;
 import dev.yive.webhook.json.spiget.ResourceUpdate;
 import dev.yive.webhook.json.subjects.PaymentSubject;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -64,7 +63,7 @@ public class DiscordUtils {
         Data data = update.getData();
         embed.setTitle(data.getName());
         embed.setUrl("https://www.spigotmc.org/resources/" + data.getId() + "/update?update=" + data.getUpdateId());
-        embed.setColor(new Color(255, 222, 0).getRGB());
+        embed.setColor(convertColour(255, 222, 0));
 
         Media media = new Media();
         String url = data.getIcon().getUrl();
@@ -81,5 +80,9 @@ public class DiscordUtils {
 
         embed.setFields(Collections.singletonList(field));
         return embed;
+    }
+
+    public static int convertColour(int r, int g, int b) {
+        return ((r & 0x0ff) <<16) | ((g & 0x0ff) <<8) | (b & 0x0ff);
     }
 }

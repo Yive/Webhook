@@ -18,7 +18,6 @@ import io.javalin.http.Handler;
 import io.javalin.http.HttpStatus;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.*;
 import java.util.Collections;
 
 public class PaymentDisputeOpenedHandler implements Handler {
@@ -47,7 +46,7 @@ public class PaymentDisputeOpenedHandler implements Handler {
         Fees fees = subject.getFees();
         paidPrice = paidPrice - fees.getTax().getAmount();
         paidPrice = paidPrice - fees.getGateway().getAmount();
-        embed.setColor(Math.round(Math.max(0, Math.max(0, paidPrice - giftCardsPrice)) * 100.0) / 100.0 > 0 ? Color.PINK.getRGB() : Color.GRAY.getRGB());
+        embed.setColor(Math.round(Math.max(0, Math.max(0, paidPrice - giftCardsPrice)) * 100.0) / 100.0 > 0 ? DiscordUtils.convertColour(255, 175, 175) : DiscordUtils.convertColour(128, 128, 128));
         WebhookBody body = new WebhookBody();
         body.setEmbeds(Collections.singletonList(embed));
 
