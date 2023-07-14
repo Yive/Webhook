@@ -33,7 +33,7 @@ public class PaymentDeclinedHandler implements Handler {
         String url = Main.config.getPayments().getDeclined().getDiscord().getUrl();
         Embed embed = DiscordUtils.createEmbed(subject);
         embed.setTitle("Payment Declined");
-        embed.setUrl("https://server.tebex.io/search/" + subject.getTransaction_id() + "/payments");
+        embed.setUrl("https://creator.tebex.io/search/" + subject.getTransaction_id() + "/payments");
         double paidPrice = 0;
         double giftCardsPrice = 0;
 

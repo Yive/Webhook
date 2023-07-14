@@ -33,7 +33,7 @@ public class PaymentDisputeLostHandler implements Handler {
         String url = Main.config.getDisputes().getLost().getDiscord().getUrl();
         Embed embed = DiscordUtils.createEmbed(subject);
         embed.setTitle("Chargeback Lost");
-        embed.setUrl("https://server.tebex.io/search/" + subject.getTransaction_id() + "/payments");
+        embed.setUrl("https://creator.tebex.io/search/" + subject.getTransaction_id() + "/payments");
         double paidPrice = 0;
         double giftCardsPrice = 0;
 

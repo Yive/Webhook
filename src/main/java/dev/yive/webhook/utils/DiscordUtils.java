@@ -49,7 +49,7 @@ public class DiscordUtils {
 
         Username username = subject.getCustomer().getUsername();
         Footer footer = new Footer();
-        footer.setText("Revenue: $" + String.format("%.2f", Math.max(0, paidPrice)) + "\nBuyer IGN: " + username.getUsername() + "\nBuyer UUID: " + username.getId() + "\nID: " + subject.getTransaction_id() + "\nWebhook v1.1.6");
+        footer.setText("Revenue: $" + String.format("%.2f", Math.max(0, paidPrice)) + "\nBuyer IGN: " + username.getUsername() + "\nBuyer UUID: " + username.getId() + "\nID: " + subject.getTransaction_id() + "\nWebhook v1.1.7");
         footer.setIcon_url("https://crafthead.net/helm/" + username.getId() + "/16.png");
         embed.setFooter(footer);
 
@@ -75,7 +75,7 @@ public class DiscordUtils {
         field.setValue(data.getVersion().getName());
 
         Footer footer = new Footer();
-        footer.setText("Webhook v1.1.6");
+        footer.setText("Webhook v1.1.7");
         embed.setFooter(footer);
 
         embed.setFields(Collections.singletonList(field));

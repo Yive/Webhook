@@ -33,7 +33,7 @@ public class PaymentDisputeOpenedHandler implements Handler {
         String url = Main.config.getDisputes().getOpened().getDiscord().getUrl();
         Embed embed = DiscordUtils.createEmbed(subject);
         embed.setTitle("Chargeback Opened");
-        embed.setUrl("https://server.tebex.io/search/" + subject.getTransaction_id() + "/payments");
+        embed.setUrl("https://creator.tebex.io/search/" + subject.getTransaction_id() + "/payments");
         double paidPrice = 0;
         double giftCardsPrice = 0;
 
