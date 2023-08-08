@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import dev.yive.webhook.json.codes.GiftCard;
 import dev.yive.webhook.json.customer.Customer;
 import dev.yive.webhook.json.misc.Fees;
+import dev.yive.webhook.json.misc.PaymentMethod;
 import dev.yive.webhook.json.products.Product;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,6 +16,7 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class PaymentSubject {
     private String transaction_id;
+    private PaymentMethod payment_method;
     private Fees fees;
     private Customer customer;
     private List<Product> products;

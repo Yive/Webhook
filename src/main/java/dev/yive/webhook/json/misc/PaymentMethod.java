@@ -1,4 +1,4 @@
-package dev.yive.webhook.json.discord.embed;
+package dev.yive.webhook.json.misc;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Getter;
@@ -7,8 +7,6 @@ import lombok.Setter;
 @Getter
 @Setter
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Field {
+public class PaymentMethod {
     private String name;
-    private String value;
-    private boolean inline;
 }

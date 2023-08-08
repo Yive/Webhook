@@ -7,8 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class Field {
+public class Author {
     private String name;
-    private String value;
-    private boolean inline;
+    private String url;
 }

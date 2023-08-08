@@ -31,9 +31,7 @@ public class PaymentDisputeClosedHandler implements Handler {
 
         PaymentSubject subject = payment.getSubject();
         String url = Main.config.getDisputes().getClosed().getDiscord().getUrl();
-        Embed embed = DiscordUtils.createEmbed(subject);
-        embed.setTitle("Chargeback Closed");
-        embed.setUrl("https://creator.tebex.io/search/" + subject.getTransaction_id() + "/payments");
+        Embed embed = DiscordUtils.createEmbed("Chargeback Closed", payment, subject);
         double paidPrice = 0;
         double giftCardsPrice = 0;
 

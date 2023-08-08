@@ -31,9 +31,7 @@ public class PaymentCompleteHandler implements Handler {
 
         PaymentSubject subject = payment.getSubject();
         String url = Main.config.getPayments().getComplete().getDiscord().getUrl();
-        Embed embed = DiscordUtils.createEmbed(subject);
-        embed.setTitle("Payment Complete");
-        embed.setUrl("https://creator.tebex.io/search/" + subject.getTransaction_id() + "/payments");
+        Embed embed = DiscordUtils.createEmbed("Payment Complete", payment, subject);
         double paidPrice = 0;
         double giftCardsPrice = 0;
 

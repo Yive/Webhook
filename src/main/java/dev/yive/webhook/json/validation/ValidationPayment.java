@@ -11,5 +11,6 @@ import lombok.Setter;
 public class ValidationPayment {
     private String id;
     private String type;
+    private String date;
     private PaymentSubject subject;
 }

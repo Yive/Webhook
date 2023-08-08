@@ -31,9 +31,7 @@ public class PaymentRefundedHandler implements Handler {
 
         PaymentSubject subject = payment.getSubject();
         String url = Main.config.getPayments().getRefunded().getDiscord().getUrl();
-        Embed embed = DiscordUtils.createEmbed(subject);
-        embed.setTitle("Payment Refunded");
-        embed.setUrl("https://creator.tebex.io/search/" + subject.getTransaction_id() + "/payments");
+        Embed embed = DiscordUtils.createEmbed("Payment Refunded", payment, subject);
         double paidPrice = 0;
         double giftCardsPrice = 0;
 

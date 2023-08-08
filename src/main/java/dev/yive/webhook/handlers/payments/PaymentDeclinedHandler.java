@@ -31,9 +31,7 @@ public class PaymentDeclinedHandler implements Handler {
 
         PaymentSubject subject = payment.getSubject();
         String url = Main.config.getPayments().getDeclined().getDiscord().getUrl();
-        Embed embed = DiscordUtils.createEmbed(subject);
-        embed.setTitle("Payment Declined");
-        embed.setUrl("https://creator.tebex.io/search/" + subject.getTransaction_id() + "/payments");
+        Embed embed = DiscordUtils.createEmbed("Payment Denied", payment, subject);
         double paidPrice = 0;
         double giftCardsPrice = 0;
 
@@ -48,7 +46,7 @@ public class PaymentDeclinedHandler implements Handler {
         paidPrice = paidPrice - fees.getGateway().getAmount();
         embed.setColor(Math.round(Math.max(0, Math.max(0, paidPrice - giftCardsPrice)) * 100.0) / 100.0 > 0 ? DiscordUtils.convertColour(255, 200, 0) : DiscordUtils.convertColour(128, 128, 128));
         WebhookBody body = new WebhookBody();
-        body.setEmbeds(Collections.singletonList(embed));
+        body.setEmbeds(Collections.singletonList(DiscordUtils.createEmbed("Payment Denied", payment, subject)));
 
         ObjectMapper mapper = new ObjectMapper();
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
