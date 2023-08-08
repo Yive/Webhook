@@ -46,7 +46,7 @@ public class PaymentDeclinedHandler implements Handler {
         paidPrice = paidPrice - fees.getGateway().getAmount();
         embed.setColor(Math.round(Math.max(0, Math.max(0, paidPrice - giftCardsPrice)) * 100.0) / 100.0 > 0 ? DiscordUtils.convertColour(255, 200, 0) : DiscordUtils.convertColour(128, 128, 128));
         WebhookBody body = new WebhookBody();
-        body.setEmbeds(Collections.singletonList(DiscordUtils.createEmbed("Payment Denied", payment, subject)));
+        body.setEmbeds(Collections.singletonList(embed));
 
         ObjectMapper mapper = new ObjectMapper();
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL);
