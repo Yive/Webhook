@@ -1,5 +1,6 @@
 package dev.yive.webhook.utils;
 
+import dev.yive.webhook.Main;
 import dev.yive.webhook.json.codes.GiftCard;
 import dev.yive.webhook.json.customer.Username;
 import dev.yive.webhook.json.discord.embed.Author;
@@ -18,7 +19,24 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class DiscordUtils {
-    public static Embed createEmbed(String authorName, ValidationPayment payment, PaymentSubject subject) {
+    public static double getRevenue(PaymentSubject subject) {
+        double paidPrice = subject.getPrice_paid().getAmount();
+        double giftCardsPrice = 0;
+        if (paidPrice > 0) {
+            // TODO: Use the platform fee whenever it is added to the webhook.
+            paidPrice = paidPrice - (paidPrice * 0.05);
+            for (GiftCard card : subject.getGift_cards()) {
+                giftCardsPrice = giftCardsPrice + card.getAmount().getAmount();
+            }
+        }
+
+        Fees fees = subject.getFees();
+        paidPrice = paidPrice - fees.getTax().getAmount();
+        paidPrice = paidPrice - fees.getGateway().getAmount();
+        return Math.max(0, paidPrice - giftCardsPrice);
+    }
+
+    public static Embed createEmbed(String authorName, ValidationPayment payment, PaymentSubject subject, double revenue) {
         Embed embed = new Embed();
         embed.setTimestamp(payment.getDate());
 
@@ -34,28 +52,16 @@ public class DiscordUtils {
         fields.add(createField("Buyer Username", username.getUsername(), false));
         fields.add(createField("Buyer UUID", username.getId(), false));
 
-        double paidPrice = 0;
-        double giftCardsPrice = 0;
         StringBuilder packagesBuilder = new StringBuilder();
         for (Product product : subject.getProducts()) {
-            paidPrice = paidPrice + product.getPaid_price().getAmount();
             packagesBuilder.append("[").append(product.getQuantity()).append("x] ").append(product.getName()).append("\n");
         }
 
-        for (GiftCard card : subject.getGift_cards()) {
-            giftCardsPrice = giftCardsPrice + card.getAmount().getAmount();
-        }
-
-        Fees fees = subject.getFees();
-        paidPrice = paidPrice - fees.getTax().getAmount();
-        paidPrice = paidPrice - fees.getGateway().getAmount();
-        paidPrice = Math.max(0, paidPrice - giftCardsPrice);
-
-        fields.add(createField("Packages [" + String.format("%.2f", paidPrice) + "]", packagesBuilder.toString(), false));
+        fields.add(createField("Packages [$" + String.format("%.2f", revenue) + "]", packagesBuilder.toString(), false));
         embed.setFields(fields);
 
         Footer footer = new Footer();
-        footer.setText("v1.1.9");
+        footer.setText(Main.VERSION);
         embed.setFooter(footer);
 
         return embed;
@@ -80,7 +86,7 @@ public class DiscordUtils {
         field.setValue(data.getVersion().getName());
 
         Footer footer = new Footer();
-        footer.setText("Webhook v1.1.7");
+        footer.setText(Main.VERSION);
         embed.setFooter(footer);
 
         embed.setFields(Collections.singletonList(field));

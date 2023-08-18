@@ -3,11 +3,8 @@ package dev.yive.webhook.handlers.payments;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import dev.yive.webhook.Main;
-import dev.yive.webhook.json.codes.GiftCard;
 import dev.yive.webhook.json.discord.WebhookBody;
 import dev.yive.webhook.json.discord.embed.Embed;
-import dev.yive.webhook.json.misc.Fees;
-import dev.yive.webhook.json.products.Product;
 import dev.yive.webhook.json.subjects.PaymentSubject;
 import dev.yive.webhook.json.validation.ValidationPayment;
 import dev.yive.webhook.json.validation.ValidationResponse;
@@ -30,21 +27,11 @@ public class PaymentCompleteHandler implements Handler {
         if (payment.getType().equals("validation.webhook")) return;
 
         PaymentSubject subject = payment.getSubject();
+        double revenue = DiscordUtils.getRevenue(subject);
         String url = Main.config.getPayments().getComplete().getDiscord().getUrl();
-        Embed embed = DiscordUtils.createEmbed("Payment Complete", payment, subject);
-        double paidPrice = 0;
-        double giftCardsPrice = 0;
+        Embed embed = DiscordUtils.createEmbed("Payment Complete", payment, subject, revenue);
 
-        for (Product product : subject.getProducts()) {
-            paidPrice = paidPrice + product.getPaid_price().getAmount();
-        }
-        for (GiftCard card : subject.getGift_cards()) {
-            giftCardsPrice = giftCardsPrice + card.getAmount().getAmount();
-        }
-        Fees fees = subject.getFees();
-        paidPrice = paidPrice - fees.getTax().getAmount();
-        paidPrice = paidPrice - fees.getGateway().getAmount();
-        embed.setColor(Math.round(Math.max(0, Math.max(0, paidPrice - giftCardsPrice)) * 100.0) / 100.0 > 0 ? DiscordUtils.convertColour(0, 255, 0) : DiscordUtils.convertColour(128, 128, 128));
+        embed.setColor(Math.round(Math.max(0, revenue) * 100.0) / 100.0 > 0 ? DiscordUtils.convertColour(0, 255, 0) : DiscordUtils.convertColour(128, 128, 128));
         WebhookBody body = new WebhookBody();
         body.setEmbeds(Collections.singletonList(embed));
 
