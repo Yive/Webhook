@@ -55,12 +55,8 @@ public class DiscordUtils {
         embed.setFields(fields);
 
         Footer footer = new Footer();
-        footer.setText("v1.1.8");
+        footer.setText("v1.1.9");
         embed.setFooter(footer);
-
-        Media thumbnail = new Media();
-        thumbnail.setUrl("https://crafthead.net/helm/" + username.getId() + "/64.png");
-        embed.setThumbnail(thumbnail);
 
         return embed;
     }
