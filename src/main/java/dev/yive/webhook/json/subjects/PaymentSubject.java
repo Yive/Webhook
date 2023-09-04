@@ -3,6 +3,7 @@ package dev.yive.webhook.json.subjects;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import dev.yive.webhook.json.codes.GiftCard;
 import dev.yive.webhook.json.customer.Customer;
+import dev.yive.webhook.json.misc.DeclineReason;
 import dev.yive.webhook.json.misc.Fees;
 import dev.yive.webhook.json.misc.PaymentMethod;
 import dev.yive.webhook.json.products.Price;
@@ -23,4 +24,5 @@ public class PaymentSubject {
     private Customer customer;
     private List<Product> products;
     private List<GiftCard> gift_cards;
+    private DeclineReason decline_reason;
 }

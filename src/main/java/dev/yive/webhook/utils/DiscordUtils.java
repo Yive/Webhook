@@ -47,6 +47,9 @@ public class DiscordUtils {
 
         Username username = subject.getCustomer().getUsername();
         ArrayList<Field> fields = new ArrayList<>();
+        if (subject.getDecline_reason() != null) {
+            fields.add(createField("Denied Reason", subject.getDecline_reason().getCode(), false));
+        }
         fields.add(createField("Transaction ID", subject.getTransaction_id(), true));
         fields.add(createField("Payment Method", subject.getPayment_method().getName(), true));
         fields.add(createField("Buyer Username", username.getUsername(), false));

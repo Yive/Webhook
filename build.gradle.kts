@@ -1,12 +1,12 @@
 plugins {
     `java-library`
     application
-    id("io.freefair.lombok") version "8.1.0"
+    id("io.freefair.lombok") version "8.3"
     id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
 group = "dev.yive.webhook"
-version = "1.1.10"
+version = "1.1.11"
 
 repositories {
     mavenCentral()
