@@ -1,5 +1,6 @@
 package dev.yive.webhook.utils;
 
+import com.jakewharton.fliptables.FlipTable;
 import dev.yive.webhook.Main;
 import dev.yive.webhook.json.codes.GiftCard;
 import dev.yive.webhook.json.customer.Username;
@@ -17,6 +18,7 @@ import dev.yive.webhook.json.validation.ValidationPayment;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 public class DiscordUtils {
     public static double getRevenue(PaymentSubject subject) {
@@ -47,20 +49,26 @@ public class DiscordUtils {
 
         Username username = subject.getCustomer().getUsername();
         ArrayList<Field> fields = new ArrayList<>();
-        if (subject.getDecline_reason() != null) {
-            fields.add(createField("Denied Reason", subject.getDecline_reason().getCode(), false));
-        }
         fields.add(createField("Transaction ID", subject.getTransaction_id(), true));
         fields.add(createField("Payment Method", subject.getPayment_method().getName(), true));
-        fields.add(createField("Buyer Username", username.getUsername(), false));
-        fields.add(createField("Buyer UUID", username.getId(), false));
+        fields.add(createField("Buyer", username.getId() + " | " + username.getUsername(), false));
 
-        StringBuilder packagesBuilder = new StringBuilder();
-        for (Product product : subject.getProducts()) {
-            packagesBuilder.append("[").append(product.getQuantity()).append("x] ").append(product.getName()).append("\n");
+        List<Product> products = subject.getProducts();
+        String[][] rows = new String[products.size()][3];
+        for (int i = 0; i < products.size(); i++) {
+            Product product = products.get(i);
+            rows[i][0] = String.valueOf(product.getQuantity());
+            rows[i][1] = product.getName();
+            rows[i][2] = product.getUsername().getUsername();
         }
 
-        fields.add(createField("Packages [$" + String.format("%.2f", revenue) + "]", packagesBuilder.toString(), false));
+        fields.add(createField("Packages [$" + String.format("%.2f", revenue) + "]", FlipTable.of(new String[]{"Count", "Package", "IGN"}, rows), false));
+
+        if (subject.getDecline_reason() != null) {
+            fields.add(createField("Denied Code", subject.getDecline_reason().getCode(), false));
+            fields.add(createField("Denied Reason", subject.getDecline_reason().getMessage().replace(" - transaction ID: " + subject.getTransaction_id(), ""), false));
+        }
+
         embed.setFields(fields);
 
         Footer footer = new Footer();

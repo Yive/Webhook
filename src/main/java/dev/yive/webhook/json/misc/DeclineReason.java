@@ -9,4 +9,5 @@ import lombok.Setter;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class DeclineReason {
     private String code;
+    private String message;
 }
