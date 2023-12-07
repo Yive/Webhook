@@ -26,7 +26,7 @@ import io.javalin.util.JavalinLogger;
 import java.io.File;
 
 public class Main {
-    public static final String VERSION = "v1.1.12";
+    public static final String VERSION = "v1.1.13";
     public static Config config;
     public static void main(String[] args) {
         FileUtils.saveResource("config.yml", false);
@@ -48,7 +48,7 @@ public class Main {
             return;
         }
 
-        Javalin javalin = Javalin.create().start(7070);
+        Javalin javalin = Javalin.create().start(config.getIp(), config.getPort());
         Runtime.getRuntime().addShutdownHook(new Thread(javalin::stop));
 
         javalin.before(new ValidationHandler());
