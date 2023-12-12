@@ -40,10 +40,13 @@ public class ValidationHandler implements Handler {
             return;
         }
 
-        String hex = hmac("HmacSHA256", bytesToHex(MessageDigest.getInstance("SHA-256").digest(ctx.body().getBytes(StandardCharsets.UTF_8))), Main.config.getTebex().getKey());
-        if (!xSignature.equals(hex)) {
-            JavalinLogger.warn("hex: " + hex + " X-Signature: " + xSignature);
-            ctx.status(HttpStatus.NOT_FOUND);
+        for (String s : Main.config.getTebex().getKey().split(",")) {
+            String hex = hmac("HmacSHA256", bytesToHex(MessageDigest.getInstance("SHA-256").digest(ctx.body().getBytes(StandardCharsets.UTF_8))), s);
+            if (!xSignature.equals(hex)) {
+                JavalinLogger.warn("hex: " + hex + " X-Signature: " + xSignature);
+                ctx.status(HttpStatus.NOT_FOUND);
+                break;
+            }
         }
     }
 

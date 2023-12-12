@@ -21,6 +21,7 @@ spiget:
 # Options to be used to validate Tebex requests
 tebex:
   # Webhook key from Tebex to validate requests
+  # Supports multiple keys, just split them with commas.
   key: ""
   # IPs that Tebex send requests from.
   ips:

@@ -6,14 +6,14 @@ plugins {
 }
 
 group = "dev.yive.webhook"
-version = "1.1.13"
+version = "1.1.14"
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    implementation("io.javalin:javalin:5.6.3")
+    implementation("io.javalin:javalin:6.0.0-beta.3")
     implementation("org.slf4j:slf4j-simple:2.0.7")
     implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.15.2")
     implementation("com.jakewharton.fliptables:fliptables:1.1.0")
