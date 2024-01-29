@@ -62,7 +62,7 @@ public class DiscordUtils {
             rows[i][2] = product.getUsername().getUsername();
         }
 
-        fields.add(createField("Packages [$" + String.format("%.2f", revenue) + "]", FlipTable.of(new String[]{"Count", "Package", "IGN"}, rows), false));
+        fields.add(createField("Packages [$" + String.format("%.2f", revenue) + "]", FlipTable.of(new String[]{"#", "Package", "IGN"}, rows), false));
 
         if (subject.getDecline_reason() != null) {
             fields.add(createField("Denied Code", subject.getDecline_reason().getCode(), false));

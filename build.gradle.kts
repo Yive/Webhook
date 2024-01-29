@@ -1,21 +1,21 @@
 plugins {
     `java-library`
     application
-    id("io.freefair.lombok") version "8.3"
+    id("io.freefair.lombok") version "8.4"
     id("com.github.johnrengelman.shadow") version "8.1.1"
 }
 
 group = "dev.yive.webhook"
-version = "1.1.14"
+version = "1.1.15"
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    implementation("io.javalin:javalin:6.0.0-beta.3")
-    implementation("org.slf4j:slf4j-simple:2.0.7")
-    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.15.2")
+    implementation("io.javalin:javalin:6.0.0")
+    implementation("org.slf4j:slf4j-simple:2.0.10")
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.16.1")
     implementation("com.jakewharton.fliptables:fliptables:1.1.0")
 }
 
