@@ -9,6 +9,7 @@ import dev.yive.webhook.json.discord.embed.Embed;
 import dev.yive.webhook.json.discord.embed.Field;
 import dev.yive.webhook.json.discord.embed.Footer;
 import dev.yive.webhook.json.discord.embed.Media;
+import dev.yive.webhook.json.misc.DeclineReason;
 import dev.yive.webhook.json.misc.Fees;
 import dev.yive.webhook.json.products.Product;
 import dev.yive.webhook.json.spiget.Data;
@@ -64,9 +65,10 @@ public class DiscordUtils {
 
         fields.add(createField("Packages [$" + String.format("%.2f", revenue) + "]", FlipTable.of(new String[]{"#", "Package", "IGN"}, rows), false));
 
-        if (subject.getDecline_reason() != null) {
-            fields.add(createField("Denied Code", subject.getDecline_reason().getCode(), false));
-            fields.add(createField("Denied Reason", subject.getDecline_reason().getMessage().replace(" - transaction ID: " + subject.getTransaction_id(), ""), false));
+        if (payment.getType().equalsIgnoreCase("payment.declined")) {
+            DeclineReason reason = subject.getDecline_reason();
+            fields.add(createField("Denied Code", reason == null ? "tebex_moment" : reason.getCode(), false));
+            fields.add(createField("Denied Reason", reason == null ? "Tebex didn't give a reason." : reason.getMessage().replace(" - transaction ID: " + subject.getTransaction_id(), ""), false));
         }
 
         embed.setFields(fields);
