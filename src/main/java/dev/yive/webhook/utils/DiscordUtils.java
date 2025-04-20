@@ -15,7 +15,9 @@ import dev.yive.webhook.json.products.Product;
 import dev.yive.webhook.json.spiget.Data;
 import dev.yive.webhook.json.spiget.ResourceUpdate;
 import dev.yive.webhook.json.subjects.PaymentSubject;
+import dev.yive.webhook.json.subjects.RecurringPaymentSubject;
 import dev.yive.webhook.json.validation.ValidationPayment;
+import dev.yive.webhook.json.validation.ValidationRecurringPayment;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -39,13 +41,30 @@ public class DiscordUtils {
         return Math.max(0, paidPrice - giftCardsPrice);
     }
 
+    public static double getRevenue(RecurringPaymentSubject subject) {
+        double paidPrice = subject.getLast_payment().getPrice_paid().getAmount();
+        double giftCardsPrice = 0;
+        if (paidPrice > 0) {
+            // TODO: Use the platform fee whenever it is added to the webhook.
+            paidPrice = paidPrice - (paidPrice * 0.05);
+            for (GiftCard card : subject.getLast_payment().getGift_cards()) {
+                giftCardsPrice = giftCardsPrice + card.getAmount().getAmount();
+            }
+        }
+
+        Fees fees = subject.getLast_payment().getFees();
+        paidPrice = paidPrice - fees.getTax().getAmount();
+        paidPrice = paidPrice - fees.getGateway().getAmount();
+        return Math.max(0, paidPrice - giftCardsPrice);
+    }
+
     public static Embed createEmbed(String authorName, ValidationPayment payment, PaymentSubject subject, double revenue) {
         Embed embed = new Embed();
         embed.setTimestamp(payment.getDate());
 
         Author author = new Author();
         author.setName(authorName);
-        author.setUrl("https://creator.tebex.io/search/" + subject.getTransaction_id() + "/payments");
+        author.setUrl("https://creator.tebex.io/payments?attribute%5B0%5D=txn_id&query%5B0%5D=" + subject.getTransaction_id());
         embed.setAuthor(author);
 
         Username username = subject.getCustomer().getUsername();
@@ -70,6 +89,54 @@ public class DiscordUtils {
             fields.add(createField("Denied Code", reason == null ? "tebex_moment" : reason.getCode(), false));
             fields.add(createField("Denied Reason", reason == null ? "Tebex didn't give a reason." : reason.getMessage().replace(" - transaction ID: " + subject.getTransaction_id(), ""), false));
         }
+
+        embed.setFields(fields);
+
+        Footer footer = new Footer();
+        footer.setText(Main.VERSION);
+        embed.setFooter(footer);
+
+        return embed;
+    }
+
+    public static Embed createEmbed(String authorName, ValidationRecurringPayment payment, RecurringPaymentSubject subject, double revenue) {
+        Embed embed = new Embed();
+        embed.setTimestamp(payment.getDate());
+
+        Author author = new Author();
+        author.setName(authorName);
+        author.setUrl("https://creator.tebex.io/recurring-payments?search%5Breference%5D=" + subject.getReference());
+        embed.setAuthor(author);
+
+        Username username = subject.getLast_payment().getCustomer().getUsername();
+        ArrayList<Field> fields = new ArrayList<>();
+        fields.add(createField("Transaction ID", subject.getLast_payment().getTransaction_id(), true));
+        fields.add(createField("Payment Method", subject.getLast_payment().getPayment_method().getName(), true));
+        fields.add(createField("Buyer", username.getId() + " | " + username.getUsername(), false));
+        fields.add(createField("Status", switch (subject.getStatus().getId()) {
+            case 2 -> "Active";
+            case 3 -> "Overdue";
+            case 4 -> "Expired";
+            case 5 -> "Cancelled";
+            case 7 -> "Pending Downgrade";
+            default -> "Unknown";
+        }, false));
+
+        List<Product> products = subject.getLast_payment().getProducts();
+        String[][] rows = new String[products.size()][3];
+        for (int i = 0; i < products.size(); i++) {
+            Product product = products.get(i);
+            rows[i][0] = String.valueOf(product.getQuantity());
+            rows[i][1] = product.getName();
+            rows[i][2] = product.getUsername().getUsername();
+        }
+
+        fields.add(createField("Packages [$" + String.format("%.2f", revenue) + "]", FlipTable.of(new String[]{"#", "Package", "IGN"}, rows), false));
+
+
+        String reason = subject.getCancel_reason();
+        if (reason != null)
+            fields.add(createField("Cancellation Reason", reason.isEmpty() ? "No reason given" : reason, false));
 
         embed.setFields(fields);
 

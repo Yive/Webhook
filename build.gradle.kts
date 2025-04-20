@@ -1,26 +1,26 @@
 plugins {
     `java-library`
     application
-    id("io.freefair.lombok") version "8.4"
-    id("com.github.johnrengelman.shadow") version "8.1.1"
+    id("io.freefair.lombok") version "8.13.1"
+    id("com.gradleup.shadow") version "9.0.0-beta12"
 }
 
 group = "dev.yive.webhook"
-version = "1.1.17"
+version = "1.1.18"
 
 repositories {
     mavenCentral()
 }
 
 dependencies {
-    implementation("io.javalin:javalin:6.1.3")
-    implementation("org.slf4j:slf4j-simple:2.0.12")
-    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.16.1")
-    implementation("com.jakewharton.fliptables:fliptables:1.1.0")
+    implementation("io.javalin:javalin:6.6.0")
+    implementation("org.slf4j:slf4j-simple:2.0.17")
+    implementation("com.fasterxml.jackson.dataformat:jackson-dataformat-yaml:2.18.3")
+    implementation("com.jakewharton.fliptables:fliptables:1.1.1")
 }
 
 java {
-    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
+    toolchain.languageVersion.set(JavaLanguageVersion.of(21))
 }
 
 tasks {
@@ -30,7 +30,7 @@ tasks {
 
     compileJava {
         options.encoding = Charsets.UTF_8.name()
-        options.release.set(17)
+        options.release.set(21)
     }
 
     shadowJar {

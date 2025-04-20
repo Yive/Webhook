@@ -1,6 +1,7 @@
 package dev.yive.webhook.json.subjects;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import dev.yive.webhook.json.misc.RecurringPaymentStatus;
 import dev.yive.webhook.json.products.Price;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,7 +12,10 @@ import lombok.Setter;
 public class RecurringPaymentSubject {
     private String reference;
     private String created_at;
+    private String paused_at;
+    private String paused_until;
     private String next_payment_at;
+    private RecurringPaymentStatus status;
     private PaymentSubject initial_payment;
     private PaymentSubject last_payment;
     private int fail_count;

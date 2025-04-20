@@ -13,7 +13,7 @@ import java.nio.file.Files;
 
 public class FileUtils {
     public static void saveResource(String resourcePath, boolean replace) {
-        if (resourcePath == null || resourcePath.equals("")) {
+        if (resourcePath == null || resourcePath.isEmpty()) {
             throw new IllegalArgumentException("ResourcePath cannot be null or empty");
         }
 

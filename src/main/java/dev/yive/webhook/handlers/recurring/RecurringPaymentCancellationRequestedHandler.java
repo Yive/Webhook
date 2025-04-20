@@ -16,20 +16,20 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.Collections;
 
-public class RecurringPaymentStartedHandler implements Handler {
+public class RecurringPaymentCancellationRequestedHandler implements Handler {
     @Override
     public void handle(@NotNull Context ctx) throws Exception {
-        if (!Main.config.getRecurring().getStarted().isEnabled()) return;
+        if (!Main.config.getRecurring().getCancellationRequested().isEnabled()) return;
         ValidationRecurringPayment payment = ctx.bodyAsClass(ValidationRecurringPayment.class);
         ctx.json(new ValidationResponse(payment.getId()));
         if (payment.getType().equals("validation.webhook")) return;
 
         RecurringPaymentSubject subject = payment.getSubject();
         double revenue = DiscordUtils.getRevenue(subject);
-        String url = Main.config.getRecurring().getStarted().getDiscord().getUrl();
-        Embed embed = DiscordUtils.createEmbed("Recurring Payment Started", payment, subject, revenue);
+        String url = Main.config.getRecurring().getCancellationRequested().getDiscord().getUrl();
+        Embed embed = DiscordUtils.createEmbed("Recurring Payment Cancellation Requested", payment, subject, revenue);
 
-        embed.setColor(Math.round(Math.max(0, revenue) * 100.0) / 100.0 > 0 ? DiscordUtils.convertColour(0, 255, 0) : DiscordUtils.convertColour(128, 128, 128));
+        embed.setColor(Math.round(Math.max(0, revenue) * 100.0) / 100.0 > 0 ? DiscordUtils.convertColour(255, 0, 0) : DiscordUtils.convertColour(128, 128, 128));
         WebhookBody body = new WebhookBody();
         body.setEmbeds(Collections.singletonList(embed));
 

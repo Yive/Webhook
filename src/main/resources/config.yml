@@ -110,3 +110,17 @@ recurring:
     discord:
       # Used to overwrite the global url
       url: ""
+  # If a recurring payment has requested to be cancelled
+  cancellation-requested:
+    # Should we listen for when Tebex sends these post requests
+    enabled: true
+    discord:
+      # Used to overwrite the global url
+      url: ""
+  # If a recurring payment has had their cancellation request aborted
+  cancellation-aborted:
+    # Should we listen for when Tebex sends these post requests
+    enabled: true
+    discord:
+      # Used to overwrite the global url
+      url: ""

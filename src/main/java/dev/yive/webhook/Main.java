@@ -10,6 +10,8 @@ import dev.yive.webhook.handlers.disputes.PaymentDisputeWonHandler;
 import dev.yive.webhook.handlers.payments.PaymentCompleteHandler;
 import dev.yive.webhook.handlers.payments.PaymentDeclinedHandler;
 import dev.yive.webhook.handlers.payments.PaymentRefundedHandler;
+import dev.yive.webhook.handlers.recurring.RecurringPaymentCancellationAbortedHandler;
+import dev.yive.webhook.handlers.recurring.RecurringPaymentCancellationRequestedHandler;
 import dev.yive.webhook.handlers.recurring.RecurringPaymentEndedHandler;
 import dev.yive.webhook.handlers.recurring.RecurringPaymentRenewedHandler;
 import dev.yive.webhook.handlers.recurring.RecurringPaymentStartedHandler;
@@ -26,7 +28,7 @@ import io.javalin.util.JavalinLogger;
 import java.io.File;
 
 public class Main {
-    public static final String VERSION = "v1.1.17";
+    public static final String VERSION = "v1.1.18";
     public static Config config;
     public static void main(String[] args) {
         FileUtils.saveResource("config.yml", false);
@@ -75,6 +77,8 @@ public class Main {
         javalin.post("/recurring-payment-started", new RecurringPaymentStartedHandler());
         javalin.post("/recurring-payment-renewed", new RecurringPaymentRenewedHandler());
         javalin.post("/recurring-payment-ended", new RecurringPaymentEndedHandler());
+        javalin.post("/recurring-payment-cancellation-requested", new RecurringPaymentCancellationRequestedHandler());
+        javalin.post("/recurring-payment-cancellation-aborted", new RecurringPaymentCancellationAbortedHandler());
 
         javalin.post("/spiget", new SpigetHandler());
     }
