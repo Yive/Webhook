@@ -28,7 +28,7 @@ import io.javalin.util.JavalinLogger;
 import java.io.File;
 
 public class Main {
-    public static final String VERSION = "v1.1.18";
+    public static final String VERSION = "v1.1.19";
     public static Config config;
     public static void main(String[] args) {
         FileUtils.saveResource("config.yml", false);
