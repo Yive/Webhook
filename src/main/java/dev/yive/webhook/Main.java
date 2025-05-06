@@ -28,7 +28,7 @@ import io.javalin.util.JavalinLogger;
 import java.io.File;
 
 public class Main {
-    public static final String VERSION = "v1.1.19";
+    public static final String VERSION = "v1.1.20";
     public static Config config;
     public static void main(String[] args) {
         FileUtils.saveResource("config.yml", false);
@@ -59,10 +59,6 @@ public class Main {
             ctx.status(HttpStatus.OK);
             GenericValidation validation = ctx.bodyAsClass(GenericValidation.class);
             ctx.json(new ValidationResponse(validation.getId()));
-            String body = ctx.body();
-            if (body.contains("\"coupons\":[{")) {
-                JavalinLogger.info(body);
-            }
         });
 
         javalin.post("/payment-complete", new PaymentCompleteHandler());

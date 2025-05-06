@@ -18,12 +18,16 @@ import dev.yive.webhook.json.subjects.PaymentSubject;
 import dev.yive.webhook.json.subjects.RecurringPaymentSubject;
 import dev.yive.webhook.json.validation.ValidationPayment;
 import dev.yive.webhook.json.validation.ValidationRecurringPayment;
+import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 public class DiscordUtils {
+    private static final int DIVIDER_CHAR_COUNT = 10;
+    private static final int DISCORD_EMBED_CHAR_LIMIT = 56; // Might be higher if not using code blocks.
+
     public static double getRevenue(PaymentSubject subject) {
         double paidPrice = subject.getPrice_paid().getAmount();
         double giftCardsPrice = 0;
@@ -80,6 +84,8 @@ public class DiscordUtils {
             rows[i][0] = String.valueOf(product.getQuantity());
             rows[i][1] = product.getName();
             rows[i][2] = product.getUsername().getUsername();
+            // Attempt to truncate if needed.
+            truncate(product, rows, i);
         }
 
         fields.add(createField("Packages [$" + String.format("%.2f", revenue) + "]", FlipTable.of(new String[]{"#", "Package", "IGN"}, rows), false));
@@ -129,6 +135,8 @@ public class DiscordUtils {
             rows[i][0] = String.valueOf(product.getQuantity());
             rows[i][1] = product.getName();
             rows[i][2] = product.getUsername().getUsername();
+            // Attempt to truncate if needed.
+            truncate(product, rows, i);
         }
 
         fields.add(createField("Packages [$" + String.format("%.2f", revenue) + "]", FlipTable.of(new String[]{"#", "Package", "IGN"}, rows), false));
@@ -183,5 +191,17 @@ public class DiscordUtils {
         field.setValue("```\n" + value + "\n```");
         field.setInline(inline);
         return field;
+    }
+
+    private static void truncate(Product product, String[][] rows, int index) {
+        final int quantityWidth = rows[index][0].length();
+        final int productWidth = rows[index][1].length();
+        final int usernameWidth = rows[index][2].length();
+        if ((DIVIDER_CHAR_COUNT + quantityWidth + productWidth + usernameWidth) > DISCORD_EMBED_CHAR_LIMIT) {
+            rows[index][1] = StringUtils.abbreviate(
+                    product.getName(),
+                    DISCORD_EMBED_CHAR_LIMIT - (DIVIDER_CHAR_COUNT + quantityWidth + usernameWidth + 3) // 3 is to allow for 3 dots
+            );
+        }
     }
 }
