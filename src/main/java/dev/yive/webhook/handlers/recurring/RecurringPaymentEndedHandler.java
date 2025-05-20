@@ -26,7 +26,7 @@ public class RecurringPaymentEndedHandler implements Handler {
 
         RecurringPaymentSubject subject = payment.getSubject();
         double revenue = DiscordUtils.getRevenue(subject);
-        String url = Main.config.getRecurring().getRenewed().getDiscord().getUrl();
+        String url = Main.config.getRecurring().getEnded().getDiscord().getUrl();
         Embed embed = DiscordUtils.createEmbed("Recurring Payment Ended", payment, subject, revenue);
 
         embed.setColor(Math.round(Math.max(0, revenue) * 100.0) / 100.0 > 0 ? DiscordUtils.convertColour(255, 0, 0) : DiscordUtils.convertColour(128, 128, 128));
