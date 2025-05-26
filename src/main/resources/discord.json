@@ -1,0 +1,32 @@
+{
+  "embeds": [
+    {
+      "title": "<internal:type>",
+      "color": 2326507,
+      "fields": [
+        {
+          "name": "Transaction ID",
+          "value": "```\n<tebex:transaction_id>\n```",
+          "inline": true
+        },
+        {
+          "name": "Payment Method",
+          "value": "```\n<tebex:payment_method.name>\n```",
+          "inline": true
+        },
+        {
+          "name": "Buyer",
+          "value": "```\n<tebex:customer.username.username>\n```"
+        },
+        {
+          "name": "Packages [<internal:revenue>]",
+          "value": "```\n<internal:packages_table>\n```"
+        }
+      ],
+      "footer": {
+        "text": "<internal:version>"
+      },
+      "timestamp": "<tebex:created_at>"
+    }
+  ]
+}

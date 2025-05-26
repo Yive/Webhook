@@ -1,0 +1,5 @@
+# Should we listen for when Tebex sends these post requests
+enabled: true
+# Edit how the embed looks in ended.json. If you don't know json, just use an embed generator.
+# Discord webhook URL to send messages to
+discord: ""

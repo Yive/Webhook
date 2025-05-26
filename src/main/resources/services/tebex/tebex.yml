@@ -1,0 +1,6 @@
+# Webhook key from Tebex to validate requests
+# This is treated as a list. Example: ["key1", "key2"]
+keys: []
+# IPs that Tebex send requests from. This is for verification.
+# You can find them here. https://docs.tebex.io/developers/webhooks/overview#ip-address
+ips: []

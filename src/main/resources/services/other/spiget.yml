@@ -1,0 +1,14 @@
+# ID given to the webhook when registered
+id: ""
+# Secret for when you want to unregister the webhook from Spiget
+secret: ""
+# Edit how the embed looks in spiget.json. If you don't know json, just use an embed generator.
+# Discord webhook URL to send messages to
+discord: ""
+# Resources that we will listen for updates
+resources:
+  - "1997"
+  - "28140"
+
+# The route for handling requests from Spiget.
+route: "/spiget"
