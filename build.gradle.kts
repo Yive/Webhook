@@ -1,5 +1,4 @@
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import org.gradle.api.tasks.testing.logging.TestLogEvent.*
 
 plugins {
   java
@@ -8,14 +7,13 @@ plugins {
 }
 
 group = "dev.yive"
-version = "2.0.0-SNAPSHOT"
+version = "2.0.0"
 
 repositories {
   mavenCentral()
 }
 
 val vertxVersion = "5.0.0"
-val junitJupiterVersion = "5.9.1"
 
 val mainVerticleName = "dev.yive.webhook.MainVerticle"
 val launcherClassName = "io.vertx.launcher.application.VertxApplication"
@@ -32,8 +30,6 @@ dependencies {
   implementation("io.vertx:vertx-config")
   implementation("io.vertx:vertx-config-yaml")
   implementation("com.jakewharton.fliptables:fliptables:1.1.1")
-  testImplementation("io.vertx:vertx-junit5")
-  testImplementation("org.junit.jupiter:junit-jupiter:$junitJupiterVersion")
 }
 
 java {
@@ -42,18 +38,12 @@ java {
 }
 
 tasks.withType<ShadowJar> {
-  archiveClassifier.set("fat")
+  archiveFileName.set("webhook.jar")
+  archiveClassifier.set("")
   manifest {
     attributes(mapOf("Main-Verticle" to mainVerticleName, "Implementation-Version" to version))
   }
   mergeServiceFiles()
-}
-
-tasks.withType<Test> {
-  useJUnitPlatform()
-  testLogging {
-    events = setOf(PASSED, SKIPPED, FAILED)
-  }
 }
 
 tasks.withType<JavaExec> {
