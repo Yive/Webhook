@@ -16,7 +16,7 @@
         },
         {
           "name": "Buyer",
-          "value": "```\n<tebex:subject.customer.username.username>\n```"
+          "value": "```\n<tebex:subject.customer.username.id> | <tebex:subject.customer.username.username>\n```"
         },
         {
           "name": "Packages [<internal:revenue>]",
