@@ -21,6 +21,10 @@
         {
           "name": "Packages [<internal:revenue>]",
           "value": "```\n<internal:packages_table>\n```"
+        },
+        {
+          "name": "Cancellation Reason",
+          "value": "```\n<tebex:subject.cancel_reason>\n```"
         }
       ],
       "footer": {

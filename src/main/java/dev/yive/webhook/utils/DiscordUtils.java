@@ -27,6 +27,11 @@ public class DiscordUtils {
     String encoded = discord.encode();
     JsonObject tebex = body.getJsonObject("subject");
 
+    // Cleans up the decline reason, but also replaces it with one when Tebex doesn't provide a reason.
+    if ("payment.declined".equalsIgnoreCase(body.getString("type"))) {
+      handleDeclined(tebex);
+    }
+
     // Tebex has a limit of 500 GBP per transaction, so I doubt this needs formatting.
     double revenue = getRevenue(tebex);
     encoded = encoded.replace("<internal:revenue>", String.format("%.2f", revenue));
@@ -49,7 +54,9 @@ public class DiscordUtils {
         .orElse(tebex.getJsonObject("price_paid")) instanceof JsonObject jsonObject
     ) ? null : jsonObject;
 
-    if (json == null || json.isEmpty()) return -1D;
+    if (json == null || json.isEmpty()) {
+      return -1D;
+    }
 
     double paidPrice = json.getDouble("amount", 0.0D);
     double giftCardsPrice = 0;
@@ -57,7 +64,9 @@ public class DiscordUtils {
       paidPrice -= (paidPrice * TEBEX_PLATFORM_FEE);
 
       for (Object object : tebex.getJsonArray("gift_cards")) {
-        if (!(object instanceof JsonObject card)) continue;
+        if (!(object instanceof JsonObject card)) {
+          continue;
+        }
 
         giftCardsPrice = giftCardsPrice + card.getJsonObject("amount").getDouble("amount", 0.0D);
       }
@@ -75,7 +84,9 @@ public class DiscordUtils {
         .orElse(tebex.getJsonArray("products")) instanceof JsonArray jsonArray
     ) ? null : jsonArray;
 
-    if (products == null || products.isEmpty()) return "";
+    if (products == null || products.isEmpty()) {
+      return "";
+    }
 
     String[][] rows = new String[products.size()][3];
     for (int i = 0; i < products.size(); i++) {
@@ -97,12 +108,14 @@ public class DiscordUtils {
     final int productWidth = rows[index][1].length();
     final int usernameWidth = rows[index][2].length();
 
-    if ((DIVIDER_CHAR_COUNT + quantityWidth + productWidth + usernameWidth) > DISCORD_EMBED_CHAR_LIMIT) {
-      rows[index][1] = abbreviate(
-        product.getString("name", "Unknown Product"),
-        DISCORD_EMBED_CHAR_LIMIT - (DIVIDER_CHAR_COUNT + quantityWidth + usernameWidth + 3) // 3 is to allow for 3 dots
-      );
+    if ((DIVIDER_CHAR_COUNT + quantityWidth + productWidth + usernameWidth) <= DISCORD_EMBED_CHAR_LIMIT) {
+      return;
     }
+
+    rows[index][1] = abbreviate(
+      product.getString("name", "Unknown Product"),
+      DISCORD_EMBED_CHAR_LIMIT - (DIVIDER_CHAR_COUNT + quantityWidth + usernameWidth + 3) // 3 is to allow for 3 dots
+    );
   }
 
   private static String abbreviate(String input, int maxLength) {
@@ -123,8 +136,11 @@ public class DiscordUtils {
         MainVerticle.LOGGER.log(Level.WARNING, "Attempted to get a JSONObject at '" + path + "', but found " + current.getClass().getName());
         return null;
       }
+
       current = jsonObject.getValue(key);
-      if (current == null) return null;
+      if (current == null) {
+        return null;
+      }
     }
 
     return current;
@@ -133,10 +149,14 @@ public class DiscordUtils {
   private static void replaceColour(JsonObject tebex, double revenue, JsonObject discord) {
     String type = tebex.getString("type");
     for (Object embeds : discord.getJsonArray("embeds")) {
-      if (!(embeds instanceof JsonObject embed)) continue;
+      if (!(embeds instanceof JsonObject embed)) {
+        continue;
+      }
 
       Integer color = embed.getInteger("color");
-      if (color != -1) continue;
+      if (color != -1) {
+        continue;
+      }
 
       embed.put("color", switch (type.toLowerCase(Locale.ROOT)) {
         case "payment.completed", "recurring-payment.started" -> revenue > 0 ? convertColour(0, 255, 0) : convertColour(128, 128, 128);
@@ -151,5 +171,21 @@ public class DiscordUtils {
 
   private static int convertColour(int r, int g, int b) {
     return ((r & 0x0ff) <<16) | ((g & 0x0ff) <<8) | (b & 0x0ff);
+  }
+
+  private static void handleDeclined(JsonObject tebex) {
+    JsonObject declineReason = tebex.getJsonObject("decline_reason");
+    if (declineReason == null) {
+      declineReason = new JsonObject().put("code", "tebex_moment").put("message", "Tebex did not provide a decline reason.");
+      tebex.put("decline_reason", declineReason);
+      return;
+    }
+
+    String message = declineReason.getString("message");
+    if (message == null) {
+      return;
+    }
+
+    declineReason.put("message", message.substring(0, message.indexOf(" - transaction id:")));
   }
 }
