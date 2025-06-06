@@ -15,42 +15,59 @@ public interface GenericTebexHandler extends Handler<RoutingContext> {
   Logger LOGGER = Logger.getLogger("Tebex");
   @Override
   default void handle(RoutingContext ctx) {
+    JsonObject body = ctx.body().asJsonObject();
+    JsonObject responseJson = new JsonObject().put("id", body.getString("id"));
+
     ConfigRetriever config = MainVerticle.CONFIGS.get(config());
-    if (config == null || !config.getCachedConfig().getBoolean("enabled", false)) return;
+    if (config == null || !config.getCachedConfig().getBoolean("enabled", false)) {
+      ctx.json(responseJson);
+      return;
+    }
 
     String discordURL = config.getCachedConfig().getString("discord");
-    if (discordURL == null || discordURL.isEmpty()) return;
+    if (discordURL == null || discordURL.isEmpty()) {
+      ctx.json(responseJson);
+      return;
+    }
 
-    JsonObject body = ctx.body().asJsonObject();
-    ctx.json(new JsonObject().put("id", body.getString("id")));
-    if (body.getString("type", "").equals("validation.webhook")) return;
+    if (body.getString("type", "").equals("validation.webhook")) {
+      ctx.json(responseJson);
+      return;
+    }
 
     ConfigRetriever discord = MainVerticle.CONFIGS.get(discord());
-    if (discord == null) return;
+    if (discord == null) {
+      ctx.json(responseJson);
+      return;
+    }
 
     JsonObject discordJson = discord.getCachedConfig();
-    if (discordJson.isEmpty()) return;
+    if (discordJson.isEmpty()) {
+      ctx.json(responseJson);
+      return;
+    }
 
     JsonObject parsed = DiscordUtils.parse(body, discordJson);
-    if (parsed.isEmpty()) return;
+    if (parsed == null || parsed.isEmpty()) {
+      ctx.json(responseJson);
+      return;
+    }
+
+    Object transactionId = Optional.ofNullable(DiscordUtils.getNested("subject.transaction_id", body))
+      .orElse(DiscordUtils.getNested("subject.last_payment.transaction_id", body));
 
     MainVerticle.getInstance().getWebClient()
       .postAbs(discordURL)
       .sendJsonObject(parsed)
-      .onSuccess(response -> {
-        LOGGER.log(Level.INFO,
-          "Successfully sent webhook message for: " +
-            Optional.ofNullable(body.getString("transaction_id"))
-              .orElse(body.getString("last_payment.transaction_id"))
-        );
-      })
-      .onFailure(response -> {
-        LOGGER.log(Level.WARNING,
-          "Failed to send webhook message for: " +
-            Optional.ofNullable(body.getString("transaction_id"))
-              .orElse(body.getString("last_payment.transaction_id"))
-          , response);
-      });
+      .onSuccess(response -> LOGGER.log(Level.INFO,
+        "Successfully sent webhook message for: " +
+          transactionId
+      ))
+      .onFailure(throwable -> LOGGER.log(Level.WARNING,
+        "Failed to send webhook message for: " +
+          transactionId
+        , throwable));
+    ctx.json(responseJson);
   }
 
   String config();

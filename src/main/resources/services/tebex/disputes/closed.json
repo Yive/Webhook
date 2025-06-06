@@ -1,22 +1,22 @@
 {
   "embeds": [
     {
-      "title": "<internal:type>",
-      "color": 2326507,
+      "title": "<tebex:subject.status.description>",
+      "color": -1,
       "fields": [
         {
           "name": "Transaction ID",
-          "value": "```\n<tebex:transaction_id>\n```",
+          "value": "```\n<tebex:subject.transaction_id>\n```",
           "inline": true
         },
         {
           "name": "Payment Method",
-          "value": "```\n<tebex:payment_method.name>\n```",
+          "value": "```\n<tebex:subject.payment_method.name>\n```",
           "inline": true
         },
         {
           "name": "Buyer",
-          "value": "```\n<tebex:customer.username.username>\n```"
+          "value": "```\n<tebex:subject.customer.username.username>\n```"
         },
         {
           "name": "Packages [<internal:revenue>]",
@@ -26,7 +26,7 @@
       "footer": {
         "text": "<internal:version>"
       },
-      "timestamp": "<tebex:created_at>"
+      "timestamp": "<tebex:subject.created_at>"
     }
   ]
 }

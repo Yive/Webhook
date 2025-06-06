@@ -25,7 +25,10 @@ public class TebexValidationHandler implements Handler<RoutingContext> {
     String ip = Optional.ofNullable(headers.get("CF-Connecting-IP")).orElse(request.remoteAddress().hostAddress());
 
     // This just allows for development testing.
-    if (MainVerticle.VERSION.endsWith("SNAPSHOT") && ip.equals("127.0.0.1")) return;
+    if (MainVerticle.VERSION.endsWith("SNAPSHOT") && ip.equals("127.0.0.1")) {
+      ctx.next();
+      return;
+    }
 
     ConfigRetriever config = MainVerticle.CONFIGS.get("services/tebex/tebex.yml");
     if (config == null) {

@@ -1,0 +1,32 @@
+{
+  "embeds": [
+    {
+      "title": "<tebex:subject.last_payment.status.description>",
+      "color": -1,
+      "fields": [
+        {
+          "name": "Transaction ID",
+          "value": "```\n<tebex:subject.last_payment.transaction_id>\n```",
+          "inline": true
+        },
+        {
+          "name": "Payment Method",
+          "value": "```\n<tebex:subject.last_payment.payment_method.name>\n```",
+          "inline": true
+        },
+        {
+          "name": "Buyer",
+          "value": "```\n<tebex:subject.last_payment.customer.username.username>\n```"
+        },
+        {
+          "name": "Packages [<internal:revenue>]",
+          "value": "```\n<internal:packages_table>\n```"
+        }
+      ],
+      "footer": {
+        "text": "<internal:version>"
+      },
+      "timestamp": "<tebex:subject.created_at>"
+    }
+  ]
+}

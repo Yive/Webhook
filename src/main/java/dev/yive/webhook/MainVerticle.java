@@ -22,8 +22,10 @@ import io.vertx.core.VerticleBase;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.HttpMethod;
 import io.vertx.core.json.JsonObject;
+import io.vertx.ext.web.Route;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.client.WebClient;
+import io.vertx.ext.web.handler.BodyHandler;
 
 import java.io.File;
 import java.nio.file.Files;
@@ -77,7 +79,7 @@ public class MainVerticle extends VerticleBase {
     return instance;
   }
 
-  private final WebClient webClient = WebClient.create(vertx);
+  private WebClient webClient;
   public WebClient getWebClient() {
     return webClient;
   }
@@ -86,6 +88,7 @@ public class MainVerticle extends VerticleBase {
   public void init(Vertx vertx, Context context) {
     super.init(vertx, context);
     instance = this;
+    webClient = WebClient.create(vertx);
     for (String path : PATHS) {
       if (path.contains("spiget")) continue; // TODO: Support Spiget
       try {
@@ -93,23 +96,21 @@ public class MainVerticle extends VerticleBase {
 
         Path configs = Path.of("configs", split);
         File file = configs.toFile();
+
+        ConfigStoreOptions options = new ConfigStoreOptions();
+        options.setType("file");
+        options.setFormat(path.endsWith(".yml") ? "yaml" : "json");
+        options.setConfig(new JsonObject().put("path", configs));
+
+        CONFIGS.put(path, ConfigRetriever.create(vertx, new ConfigRetrieverOptions().addStore(options)));
+
         if (file.exists()) continue;
 
         file.getParentFile().mkdirs();
-        Files.copy(MainVerticle.class.getClassLoader().getResourceAsStream(path.endsWith(".json") ? "discord.json" : path), configs);
+        Files.copy(MainVerticle.class.getClassLoader().getResourceAsStream(path), configs);
       } catch (Exception e) {
         LOGGER.log(Level.WARNING, "Failed to load config at '" + path + "'", e);
       }
-    }
-
-    for (String path : PATHS) {
-      ConfigStoreOptions options = new ConfigStoreOptions();
-      options.setType("file");
-      if (path.endsWith(".yml"))
-        options.setFormat("yaml");
-      options.setConfig(new JsonObject().put("path", path));
-
-      CONFIGS.put(path, ConfigRetriever.create(vertx, new ConfigRetrieverOptions().addStore(options)));
     }
   }
 
@@ -125,48 +126,72 @@ public class MainVerticle extends VerticleBase {
       // All Tebex paths need the validation handler.
       // TODO: Maybe support custom paths.
       router.route(HttpMethod.POST, "/payment-dispute-closed")
+        .handler(BodyHandler.create())
         .handler(new TebexValidationHandler())
         .handler(new DisputeClosedHandler());
       router.route(HttpMethod.POST, "/payment-dispute-lost")
+        .handler(BodyHandler.create())
         .handler(new TebexValidationHandler())
         .handler(new DisputeLostHandler());
       router.route(HttpMethod.POST, "/payment-dispute-opened")
+        .handler(BodyHandler.create())
         .handler(new TebexValidationHandler())
         .handler(new DisputeOpenedHandler());
       router.route(HttpMethod.POST, "/payment-dispute-won")
+        .handler(BodyHandler.create())
         .handler(new TebexValidationHandler())
         .handler(new DisputeWonHandler());
 
       router.route(HttpMethod.POST, "/payment-complete")
+        .handler(BodyHandler.create())
         .handler(new TebexValidationHandler())
         .handler(new PaymentCompleteHandler());
       router.route(HttpMethod.POST, "/payment-denied")
+        .handler(BodyHandler.create())
         .handler(new TebexValidationHandler())
         .handler(new PaymentDeniedHandler());
       router.route(HttpMethod.POST, "/payment-refunded")
+        .handler(BodyHandler.create())
         .handler(new TebexValidationHandler())
         .handler(new PaymentRefundedHandler());
 
       router.route(HttpMethod.POST, "/recurring-payment-cancellation-aborted")
+        .handler(BodyHandler.create())
         .handler(new TebexValidationHandler())
         .handler(new RecurringCancellationAbortedHandler());
       router.route(HttpMethod.POST, "/recurring-payment-cancellation-requested")
+        .handler(BodyHandler.create())
         .handler(new TebexValidationHandler())
         .handler(new RecurringCancellationRequestedHandler());
       router.route(HttpMethod.POST, "/recurring-payment-ended")
+        .handler(BodyHandler.create())
         .handler(new TebexValidationHandler())
         .handler(new RecurringEndedHandler());
       router.route(HttpMethod.POST, "/recurring-payment-renewed")
+        .handler(BodyHandler.create())
         .handler(new TebexValidationHandler())
         .handler(new RecurringRenewedHandler());
       router.route(HttpMethod.POST, "/recurring-payment-started")
+        .handler(BodyHandler.create())
         .handler(new TebexValidationHandler())
         .handler(new RecurringStartedHandler());
 
+      for (Route route : router.getRoutes()) {
+        route.failureHandler(event ->  {
+          LOGGER.log(Level.WARNING, "Error occurred on path: " + event.request().path());
+          event.failure().printStackTrace();
+          event.response().end();
+        });
+      }
+
       return vertx.createHttpServer()
         .requestHandler(router)
-        .listen(Optional.ofNullable(CONFIGS.get("config.yml")).map(config -> config.getCachedConfig().getInteger("port")).orElse(8080))
-        .onSuccess(server -> LOGGER.info("Webhook v" + VERSION + " started on port: " + server.actualPort()))
+        .listen(
+          Optional.ofNullable(CONFIGS.get("config.yml"))
+            .map(config -> config.getCachedConfig().getInteger("port"))
+            .orElse(8080)
+        )
+        .onSuccess(server -> LOGGER.log(Level.INFO, "Webhook v" + VERSION + " started on port: " + server.actualPort()))
         .onFailure(throwable -> LOGGER.log(Level.WARNING, "Failed to start webhook", throwable));
     });
   }

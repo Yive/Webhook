@@ -84,7 +84,7 @@ public class SpigetHandler implements Handler<RoutingContext> {
       if (discordJson.isEmpty()) return;
 
       JsonObject parsed = DiscordUtils.parse(body, discordJson);
-      if (parsed.isEmpty()) return;
+      if (parsed == null || parsed.isEmpty()) return;
 
       MainVerticle.getInstance().getWebClient()
         .postAbs(discordURL)
