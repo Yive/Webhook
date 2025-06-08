@@ -191,6 +191,6 @@ public class DiscordUtils {
       return;
     }
 
-    declineReason.put("message", message.substring(0, message.indexOf(" - transaction id:")));
+    declineReason.put("message", message.substring(0, message.toLowerCase(Locale.ROOT).indexOf(" - transaction id:")));
   }
 }
