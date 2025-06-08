@@ -6,7 +6,7 @@ import dev.yive.webhook.services.tebex.disputes.DisputeLostHandler;
 import dev.yive.webhook.services.tebex.disputes.DisputeOpenedHandler;
 import dev.yive.webhook.services.tebex.disputes.DisputeWonHandler;
 import dev.yive.webhook.services.tebex.payments.PaymentCompleteHandler;
-import dev.yive.webhook.services.tebex.payments.PaymentDeniedHandler;
+import dev.yive.webhook.services.tebex.payments.PaymentDeclinedHandler;
 import dev.yive.webhook.services.tebex.payments.PaymentRefundedHandler;
 import dev.yive.webhook.services.tebex.recurring.RecurringEndedHandler;
 import dev.yive.webhook.services.tebex.recurring.RecurringRenewedHandler;
@@ -50,7 +50,7 @@ public class MainVerticle extends VerticleBase {
     "services/tebex/disputes/opened.yml",
     "services/tebex/disputes/won.yml",
     "services/tebex/payments/complete.yml",
-    "services/tebex/payments/denied.yml",
+    "services/tebex/payments/declined.yml",
     "services/tebex/payments/refunded.yml",
     "services/tebex/recurring/cancellation/aborted.yml",
     "services/tebex/recurring/cancellation/requested.yml",
@@ -65,7 +65,7 @@ public class MainVerticle extends VerticleBase {
     "services/tebex/disputes/opened.json",
     "services/tebex/disputes/won.json",
     "services/tebex/payments/complete.json",
-    "services/tebex/payments/denied.json",
+    "services/tebex/payments/declined.json",
     "services/tebex/payments/refunded.json",
     "services/tebex/recurring/cancellation/aborted.json",
     "services/tebex/recurring/cancellation/requested.json",
@@ -146,10 +146,10 @@ public class MainVerticle extends VerticleBase {
         .handler(BodyHandler.create())
         .handler(new TebexValidationHandler())
         .handler(new PaymentCompleteHandler());
-      router.route(HttpMethod.POST, "/payment-denied")
+      router.route(HttpMethod.POST, "/payment-declined")
         .handler(BodyHandler.create())
         .handler(new TebexValidationHandler())
-        .handler(new PaymentDeniedHandler());
+        .handler(new PaymentDeclinedHandler());
       router.route(HttpMethod.POST, "/payment-refunded")
         .handler(BodyHandler.create())
         .handler(new TebexValidationHandler())

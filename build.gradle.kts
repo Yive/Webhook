@@ -3,11 +3,11 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 plugins {
   java
   application
-  id("com.gradleup.shadow") version "9.0.0-beta13"
+  id("com.gradleup.shadow") version "9.0.0-beta15"
 }
 
 group = "dev.yive"
-version = "2.0.0"
+version = "2.0.1"
 
 repositories {
   mavenCentral()

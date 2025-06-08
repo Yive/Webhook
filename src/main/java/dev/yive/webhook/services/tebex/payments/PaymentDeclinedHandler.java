@@ -2,14 +2,14 @@ package dev.yive.webhook.services.tebex.payments;
 
 import dev.yive.webhook.services.tebex.GenericTebexHandler;
 
-public class PaymentDeniedHandler implements GenericTebexHandler {
+public class PaymentDeclinedHandler implements GenericTebexHandler {
   @Override
   public String config() {
-    return "services/tebex/payments/denied.yml";
+    return "services/tebex/payments/declined.yml";
   }
 
   @Override
   public String discord() {
-    return "services/tebex/payments/denied.json";
+    return "services/tebex/payments/declined.json";
   }
 }

@@ -8,7 +8,6 @@ import io.vertx.core.json.JsonObject;
 
 import java.util.List;
 import java.util.Locale;
-import java.util.Optional;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
 
@@ -49,41 +48,42 @@ public class DiscordUtils {
   }
 
   public static double getRevenue(JsonObject tebex) {
-    JsonObject json = !(
-      Optional.ofNullable(getNested("last_payment.price_paid", tebex))
-        .orElse(tebex.getJsonObject("price_paid")) instanceof JsonObject jsonObject
-    ) ? null : jsonObject;
+    JsonObject source = tebex.containsKey("last_payment") ? tebex.getJsonObject("last_payment") : tebex;
 
-    if (json == null || json.isEmpty()) {
+    JsonObject pricePaid = source.getJsonObject("price_paid");
+    if (pricePaid == null || pricePaid.isEmpty()) {
       return -1D;
     }
 
-    double paidPrice = json.getDouble("amount", 0.0D);
+    double paidPrice = pricePaid.getDouble("amount", 0.0D);
     double giftCardsPrice = 0;
     if (paidPrice > 0) {
       paidPrice -= (paidPrice * TEBEX_PLATFORM_FEE);
 
-      for (Object object : tebex.getJsonArray("gift_cards")) {
-        if (!(object instanceof JsonObject card)) {
-          continue;
-        }
+      JsonArray giftCards = source.getJsonArray("gift_cards");
+      if (giftCards != null) {
+        for (Object object : giftCards) {
+          if (!(object instanceof JsonObject card)) {
+            continue;
+          }
 
-        giftCardsPrice = giftCardsPrice + card.getJsonObject("amount").getDouble("amount", 0.0D);
+          giftCardsPrice = giftCardsPrice + card.getJsonObject("amount").getDouble("amount", 0.0D);
+        }
       }
     }
 
-    JsonObject fees = tebex.getJsonObject("fees");
-    paidPrice -= fees.getJsonObject("tax").getDouble("amount", 0.0D);
-    paidPrice -= fees.getJsonObject("gateway").getDouble("amount", 0.0D);
+    JsonObject fees = source.getJsonObject("fees");
+    if (fees != null) {
+      paidPrice -= fees.getJsonObject("tax").getDouble("amount", 0.0D);
+      paidPrice -= fees.getJsonObject("gateway").getDouble("amount", 0.0D);
+    }
     return Math.max(0, paidPrice - giftCardsPrice);
   }
 
   public static String getPackagesTable(JsonObject tebex) {
-    JsonArray products = !(
-      Optional.ofNullable(getNested("last_payment.products", tebex))
-        .orElse(tebex.getJsonArray("products")) instanceof JsonArray jsonArray
-    ) ? null : jsonArray;
+    JsonObject source = tebex.containsKey("last_payment") ? tebex.getJsonObject("last_payment") : tebex;
 
+    JsonArray products = source.getJsonArray("products");
     if (products == null || products.isEmpty()) {
       return "";
     }
@@ -148,7 +148,12 @@ public class DiscordUtils {
 
   private static void replaceColour(JsonObject tebex, double revenue, JsonObject discord) {
     String type = tebex.getString("type");
-    for (Object embeds : discord.getJsonArray("embeds")) {
+    JsonArray embedsArray = discord.getJsonArray("embeds");
+    if (embedsArray == null || embedsArray.isEmpty()) {
+      return;
+    }
+
+    for (Object embeds : embedsArray) {
       if (!(embeds instanceof JsonObject embed)) {
         continue;
       }
