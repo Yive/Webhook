@@ -8,10 +8,13 @@ import java.security.NoSuchAlgorithmException;
 
 public class CryptoUtils {
   public static String hmac(String algorithm, String data, String key) throws NoSuchAlgorithmException, InvalidKeyException {
-    SecretKeySpec secretKeySpec = new SecretKeySpec(key.getBytes(StandardCharsets.UTF_8), algorithm);
+    return bytesToHex(hmac(algorithm, data.getBytes(StandardCharsets.UTF_8), key.getBytes(StandardCharsets.UTF_8)));
+  }
+
+  public static byte[] hmac(String algorithm, byte[] data, byte[] key) throws NoSuchAlgorithmException, InvalidKeyException {
     Mac mac = Mac.getInstance(algorithm);
-    mac.init(secretKeySpec);
-    return bytesToHex(mac.doFinal(data.getBytes(StandardCharsets.UTF_8)));
+    mac.init(new SecretKeySpec(key, algorithm));
+    return mac.doFinal(data);
   }
 
   public static String bytesToHex(byte[] hash) {

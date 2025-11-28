@@ -1,0 +1,26 @@
+{
+  "embeds": [
+    {
+      "title": "<paynow:body.status>",
+      "color": -1,
+      "fields": [
+        {
+          "name": "Transaction ID",
+          "value": "```\n<paynow:body.id>\n```"
+        },
+        {
+          "name": "Buyer",
+          "value": "```\n<paynow:body.customer.profile.id> | <paynow:body.customer.profile.name>\n```"
+        },
+        {
+          "name": "Packages",
+          "value": "```\n<internal:packages_table>\n```"
+        }
+      ],
+      "footer": {
+        "text": "<internal:version>"
+      },
+      "timestamp": "<paynow:body.created_at>"
+    }
+  ]
+}

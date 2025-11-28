@@ -1,4 +1,4 @@
-package dev.yive.webhook.services.tebex;
+package dev.yive.webhook.services.paynow;
 
 import dev.yive.webhook.MainVerticle;
 import dev.yive.webhook.utils.CryptoUtils;
@@ -11,14 +11,14 @@ import io.vertx.core.http.HttpServerRequest;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
-
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-public class TebexValidationHandler implements Handler<RoutingContext> {
+public class PayNowValidationHandler implements Handler<RoutingContext> {
   @Override
   public void handle(RoutingContext ctx) {
     HttpServerRequest request = ctx.request();
@@ -31,7 +31,7 @@ public class TebexValidationHandler implements Handler<RoutingContext> {
       return;
     }
 
-    ConfigRetriever config = MainVerticle.CONFIGS.get("services/tebex/tebex.yml");
+    ConfigRetriever config = MainVerticle.CONFIGS.get("services/paynow/paynow.yml");
     if (config == null) {
       ctx.response().setStatusCode(HttpResponseStatus.INTERNAL_SERVER_ERROR.code());
       ctx.json(new JsonObject(Map.of("error", "Misconfigured application")));
@@ -51,10 +51,17 @@ public class TebexValidationHandler implements Handler<RoutingContext> {
       return;
     }
 
-    String signature = headers.get("X-Signature");
+    String signature = headers.get("PayNow-Signature");
     if (signature == null) {
       ctx.response().setStatusCode(HttpResponseStatus.BAD_REQUEST.code());
       ctx.json(new JsonObject(Map.of("error", "Missing signature")));
+      return;
+    }
+
+    String timestamp = headers.get("PayNow-Timestamp");
+    if (timestamp == null) {
+      ctx.response().setStatusCode(HttpResponseStatus.BAD_REQUEST.code());
+      ctx.json(new JsonObject(Map.of("error", "Missing timestamp")));
       return;
     }
 
@@ -65,27 +72,28 @@ public class TebexValidationHandler implements Handler<RoutingContext> {
       return;
     }
 
-    Map<String, Pair<Boolean, String>> results = new HashMap<>(keys.size());
+    byte[] signatureBytes = signature.getBytes(StandardCharsets.UTF_8);
+    byte[] dataBytes = (timestamp + "." + ctx.body().asString()).getBytes(StandardCharsets.UTF_8);
+    Map<String, Pair<Boolean, byte[]>> results = new HashMap<>(keys.size());
     for (int index = 0; index < keys.size(); index++) {
       String key = keys.getString(index);
       if (key == null) continue;
 
       try {
-        String hex = CryptoUtils.hmac("HmacSHA256",
-          CryptoUtils.bytesToHex(
-            MessageDigest.getInstance("SHA-256")
-              .digest(ctx.body().asString().getBytes(StandardCharsets.UTF_8))
-          ),
-          key
+        byte[] hex = CryptoUtils.hmac(
+          "HmacSHA256",
+          dataBytes,
+          key.getBytes(StandardCharsets.UTF_8)
         );
-        // I probably should use MessageDigest.isEqual, but this works... So I won't touch anything.
-        results.put(key, new Pair<>(signature.equals(hex), hex));
+        results.put(key, new Pair<>(MessageDigest.isEqual(signatureBytes, Base64.getEncoder().encode(hex)), hex));
       } catch (Exception ignored) {}
     }
 
     boolean noneMatch = true;
-    for (Pair<Boolean, String> pair : results.values()) {
-      if (!pair.left()) continue;
+    for (Pair<Boolean, byte[]> pair : results.values()) {
+      if (!pair.left()) {
+        continue;
+      }
 
       noneMatch = false;
       break;

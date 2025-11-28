@@ -1,6 +1,6 @@
 # Webhook
 
-Webhook that can be used to receive payment POST requests from Tebex and project update POST requests from Spiget to post as embeds into Discord via their webhook feature.
+Webhook that can be used to receive payment POST requests from Tebex or PayNow and project update POST requests from Spiget to post as embeds into Discord via their webhook feature.
 
 ## Building
 ```bash

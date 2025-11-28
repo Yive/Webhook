@@ -3,17 +3,17 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 plugins {
   java
   application
-  id("com.gradleup.shadow") version "9.0.0-beta15"
+  id("com.gradleup.shadow") version "9.2.2"
 }
 
 group = "dev.yive"
-version = "2.0.1"
+version = "2.1.0"
 
 repositories {
   mavenCentral()
 }
 
-val vertxVersion = "5.0.0"
+val vertxVersion = "5.0.5"
 
 val mainVerticleName = "dev.yive.webhook.MainVerticle"
 val launcherClassName = "io.vertx.launcher.application.VertxApplication"
@@ -43,6 +43,11 @@ tasks.withType<ShadowJar> {
   manifest {
     attributes(mapOf("Main-Verticle" to mainVerticleName, "Implementation-Version" to version))
   }
+
+  // Duplicate strategy must be set to INCLUDE due to the fact that EXCLUDE
+  // breaks the config processors resulting in only yaml being the only supported format.
+  duplicatesStrategy = DuplicatesStrategy.INCLUDE
+
   mergeServiceFiles()
 }
 

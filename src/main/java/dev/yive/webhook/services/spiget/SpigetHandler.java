@@ -9,6 +9,7 @@ import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.web.RoutingContext;
 
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -20,46 +21,53 @@ public class SpigetHandler implements Handler<RoutingContext> {
     // Verify if the request has the Spiget header
     String requestId = ctx.request().headers().get("X-Spiget-HookId");
     if (requestId == null) {
-      ctx.fail(HttpResponseStatus.UNAUTHORIZED.code());
+      ctx.response().setStatusCode(HttpResponseStatus.UNAUTHORIZED.code());
+      ctx.json(new JsonObject(Map.of("error", "Missing ID")));
       return;
     }
 
     // Attempt to get the config
     ConfigRetriever retriever = MainVerticle.CONFIGS.get("services/other/spiget.yml");
     if (retriever == null) {
-      ctx.fail(HttpResponseStatus.INTERNAL_SERVER_ERROR.code());
+      ctx.response().setStatusCode(HttpResponseStatus.INTERNAL_SERVER_ERROR.code());
+      ctx.json(new JsonObject(Map.of("error", "Misconfigured application")));
       return;
     }
 
     JsonObject config = retriever.getCachedConfig();
     if (config.isEmpty()) {
-      ctx.fail(HttpResponseStatus.INTERNAL_SERVER_ERROR.code());
+      ctx.response().setStatusCode(HttpResponseStatus.INTERNAL_SERVER_ERROR.code());
+      ctx.json(new JsonObject(Map.of("error", "Misconfigured application")));
       return;
     }
 
     // Attempt to get the id we have in our config
     String id = config.getString("id");
     if (id == null || id.isEmpty()) {
-      ctx.fail(HttpResponseStatus.INTERNAL_SERVER_ERROR.code());
+      ctx.response().setStatusCode(HttpResponseStatus.INTERNAL_SERVER_ERROR.code());
+      ctx.json(new JsonObject(Map.of("error", "Missing ID in config")));
       return;
     }
 
     // Fail if the ID doesn't match what is in our config
     if (!id.equals(requestId)) {
-      ctx.fail(HttpResponseStatus.UNAUTHORIZED.code());
+      ctx.response().setStatusCode(HttpResponseStatus.UNAUTHORIZED.code());
+      ctx.json(new JsonObject(Map.of("error", "Invalid ID")));
       return;
     }
 
     // Attempt to get the list of resources we care about.
     JsonArray resources = config.getJsonArray("resources");
     if (resources == null || resources.isEmpty()) {
-      ctx.fail(HttpResponseStatus.INTERNAL_SERVER_ERROR.code());
+      ctx.response().setStatusCode(HttpResponseStatus.INTERNAL_SERVER_ERROR.code());
+      ctx.json(new JsonObject(Map.of("error", "Missing resources")));
       return;
     }
 
     String discordURL = config.getString("discord");
     if (discordURL == null || discordURL.isEmpty()) {
-      ctx.fail(HttpResponseStatus.INTERNAL_SERVER_ERROR.code());
+      ctx.response().setStatusCode(HttpResponseStatus.INTERNAL_SERVER_ERROR.code());
+      ctx.json(new JsonObject(Map.of("error", "Missing discord link")));
       return;
     }
 
@@ -70,7 +78,8 @@ public class SpigetHandler implements Handler<RoutingContext> {
       // Attempt to get the resource id from the body
       Integer resourceId = body.getInteger("id");
       if (resourceId == null) {
-        ctx.fail(HttpResponseStatus.BAD_REQUEST.code());
+        ctx.response().setStatusCode(HttpResponseStatus.BAD_REQUEST.code());
+        ctx.json(new JsonObject(Map.of("error", "Resource missing ID")));
         return;
       }
 
@@ -97,7 +106,8 @@ public class SpigetHandler implements Handler<RoutingContext> {
         });
     } catch (Exception e) {
       LOGGER.log(Level.WARNING, "Error occurred whilst handling a request from: " + ctx.request().remoteAddress(), e);
-      ctx.fail(HttpResponseStatus.INTERNAL_SERVER_ERROR.code());
+      ctx.response().setStatusCode(HttpResponseStatus.INTERNAL_SERVER_ERROR.code());
+      ctx.json(new JsonObject(Map.of("error", "Unexpected error")));
     }
   }
 }

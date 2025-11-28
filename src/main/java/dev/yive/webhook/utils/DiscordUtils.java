@@ -11,9 +11,11 @@ import java.util.Locale;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
 
+// TODO: Split this into different classes
 public class DiscordUtils {
-  private static final List<Pattern> PATTERNS = List.of(
+  public static final List<Pattern> PATTERNS = List.of(
     Pattern.compile("(<tebex:)(.*?)(>)"),
+    Pattern.compile("(<paynow:)(.*?)(>)"),
     Pattern.compile("(<spiget:)(.*?)(>)")
   );
 
@@ -103,7 +105,7 @@ public class DiscordUtils {
     return FlipTable.of(new String[]{"#", "Package", "IGN"}, rows).replace("\n", "\\n");
   }
 
-  private static void truncate(JsonObject product, String[][] rows, int index) {
+  public static void truncate(JsonObject product, String[][] rows, int index) {
     final int quantityWidth = rows[index][0].length();
     final int productWidth = rows[index][1].length();
     final int usernameWidth = rows[index][2].length();
@@ -114,7 +116,7 @@ public class DiscordUtils {
 
     rows[index][1] = abbreviate(
       product.getString("name", "Unknown Product"),
-      DISCORD_EMBED_CHAR_LIMIT - (DIVIDER_CHAR_COUNT + quantityWidth + usernameWidth + 3) // 3 is to allow for 3 dots
+      DISCORD_EMBED_CHAR_LIMIT - (DIVIDER_CHAR_COUNT + quantityWidth + usernameWidth + 3) // 3 is to allow for ellipsis.
     );
   }
 
@@ -165,16 +167,16 @@ public class DiscordUtils {
 
       embed.put("color", switch (type.toLowerCase(Locale.ROOT)) {
         case "payment.completed", "recurring-payment.started" -> revenue > 0 ? convertColour(0, 255, 0) : convertColour(128, 128, 128);
-        case "payment.declined", "recurring-payment.renewed" -> convertColour(255, 150, 50);
+        case "payment.declined" -> convertColour(255, 150, 50);
         case "payment.dispute.opened", "payment.dispute.lost", "recurring-payment.ended",
              "recurring-payment.cancellation.requested" -> convertColour(255, 0, 0);
-        case "payment.dispute.won", "payment.dispute.closed", "recurring-payment.cancellation.aborted" -> convertColour(0, 255, 0);
+        case "recurring-payment.renewed", "payment.dispute.won", "payment.dispute.closed", "recurring-payment.cancellation.aborted" -> convertColour(0, 255, 0);
         default -> convertColour(128, 128, 128);
       });
     }
   }
 
-  private static int convertColour(int r, int g, int b) {
+  public static int convertColour(int r, int g, int b) {
     return ((r & 0x0ff) <<16) | ((g & 0x0ff) <<8) | (b & 0x0ff);
   }
 

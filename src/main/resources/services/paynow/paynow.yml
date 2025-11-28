@@ -1,0 +1,6 @@
+# Webhook key from PayNow to validate requests
+# This is treated as a list. Example: ["key1", "key2"]
+keys: []
+# IPs that PayNow send requests from. This is for verification.
+# You can find them here. https://docs.paynow.gg/webhooks/validating-incoming-webhooks#ip-addresses
+ips: []

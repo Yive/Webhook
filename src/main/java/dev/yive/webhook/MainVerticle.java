@@ -1,5 +1,12 @@
 package dev.yive.webhook;
 
+import dev.yive.webhook.services.paynow.PayNowValidationHandler;
+import dev.yive.webhook.services.paynow.order.ChargebackHandler;
+import dev.yive.webhook.services.paynow.order.CompletedHandler;
+import dev.yive.webhook.services.paynow.order.RefundedHandler;
+import dev.yive.webhook.services.paynow.subscription.ActivatedHandler;
+import dev.yive.webhook.services.paynow.subscription.CancelledHandler;
+import dev.yive.webhook.services.paynow.subscription.RenewedHandler;
 import dev.yive.webhook.services.tebex.TebexValidationHandler;
 import dev.yive.webhook.services.tebex.disputes.DisputeClosedHandler;
 import dev.yive.webhook.services.tebex.disputes.DisputeLostHandler;
@@ -44,6 +51,14 @@ public class MainVerticle extends VerticleBase {
   private static final String[] PATHS = new String[]{
     // Actual configs
     "config.yml",
+    // TODO: Maybe support the other webhook events... idk what they do though.
+    "services/paynow/order/chargeback.yml",
+    "services/paynow/order/completed.yml",
+    "services/paynow/order/refunded.yml",
+    "services/paynow/subscription/activated.yml",
+    "services/paynow/subscription/cancelled.yml",
+    "services/paynow/subscription/renewed.yml",
+    "services/paynow/paynow.yml",
     "services/other/spiget.yml",
     "services/tebex/disputes/closed.yml",
     "services/tebex/disputes/lost.yml",
@@ -59,6 +74,12 @@ public class MainVerticle extends VerticleBase {
     "services/tebex/recurring/started.yml",
     "services/tebex/tebex.yml",
     // Discord Embed JSONs
+    "services/paynow/order/chargeback.json",
+    "services/paynow/order/completed.json",
+    "services/paynow/order/refunded.json",
+    "services/paynow/subscription/activated.json",
+    "services/paynow/subscription/cancelled.json",
+    "services/paynow/subscription/renewed.json",
     "services/other/spiget.json",
     "services/tebex/disputes/closed.json",
     "services/tebex/disputes/lost.json",
@@ -123,8 +144,34 @@ public class MainVerticle extends VerticleBase {
 
       //router.route(HttpMethod.POST, "/spiget").handler(new SpigetHandler()); // TODO: Support Spiget
 
+      // All PayNow paths need the validation handler.
+      router.route(HttpMethod.POST, "/paynow/order/chargeback")
+        .handler(BodyHandler.create())
+        .handler(new PayNowValidationHandler())
+        .handler(new ChargebackHandler());
+      router.route(HttpMethod.POST, "/paynow/order/completed")
+        .handler(BodyHandler.create())
+        .handler(new PayNowValidationHandler())
+        .handler(new CompletedHandler());
+      router.route(HttpMethod.POST, "/paynow/order/refund")
+        .handler(BodyHandler.create())
+        .handler(new PayNowValidationHandler())
+        .handler(new RefundedHandler());
+      router.route(HttpMethod.POST, "/paynow/subscription/activated")
+        .handler(BodyHandler.create())
+        .handler(new PayNowValidationHandler())
+        .handler(new ActivatedHandler());
+      router.route(HttpMethod.POST, "/paynow/subscription/cancelled")
+        .handler(BodyHandler.create())
+        .handler(new PayNowValidationHandler())
+        .handler(new CancelledHandler());
+      router.route(HttpMethod.POST, "/paynow/subscription/renewed")
+        .handler(BodyHandler.create())
+        .handler(new PayNowValidationHandler())
+        .handler(new RenewedHandler());
+
       // All Tebex paths need the validation handler.
-      // TODO: Maybe support custom paths.
+      // TODO: Change these to be in a similar format to paynow.
       router.route(HttpMethod.POST, "/payment-dispute-closed")
         .handler(BodyHandler.create())
         .handler(new TebexValidationHandler())
@@ -178,8 +225,7 @@ public class MainVerticle extends VerticleBase {
 
       for (Route route : router.getRoutes()) {
         route.failureHandler(event ->  {
-          LOGGER.log(Level.WARNING, "Error occurred on path: " + event.request().path());
-          event.failure().printStackTrace();
+          LOGGER.log(Level.WARNING, "Error occurred on path: " + event.request().path(), event.failure());
           event.response().end();
         });
       }
