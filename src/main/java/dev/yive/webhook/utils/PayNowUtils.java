@@ -88,7 +88,7 @@ public class PayNowUtils {
         });
 
       // Attempt to truncate if needed.
-      DiscordUtils.truncate(product, rows, i);
+      DiscordUtils.truncate(product.containsKey("product") ? product.getJsonObject("product") : product, rows, i);
     }
 
     // Special characters in the pack will break the column width. I ain't fixing that.
