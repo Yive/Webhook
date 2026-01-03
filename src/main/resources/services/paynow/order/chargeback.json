@@ -11,10 +11,6 @@
         {
           "name": "Buyer",
           "value": "```\n<paynow:body.customer.profile.id> | <paynow:body.customer.profile.name>\n```"
-        },
-        {
-          "name": "Packages",
-          "value": "```\n<internal:packages_table>\n```"
         }
       ],
       "footer": {

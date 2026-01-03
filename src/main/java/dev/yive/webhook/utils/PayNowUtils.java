@@ -59,7 +59,12 @@ public class PayNowUtils {
   }
 
   public static String getPackagesTable(JsonObject body) {
-    JsonArray products = body.containsKey("lines") ? body.getJsonArray("lines") : new JsonArray().add(body.getJsonObject("product"));
+    JsonArray products = null;
+    if (body.containsKey("lines")) {
+      products = body.getJsonArray("lines");
+    } else if (body.containsKey("product")) {
+      products = new JsonArray().add(body.getJsonObject("product"));
+    }
     if (products == null || products.isEmpty()) {
       return "";
     }
