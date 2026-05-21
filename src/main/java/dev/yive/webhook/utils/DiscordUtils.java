@@ -102,6 +102,7 @@ public class DiscordUtils {
       truncate(product, rows, i);
     }
 
+    // Special characters in the package will break the column width. I ain't fixing that.
     return FlipTable.of(new String[]{"#", "Package", "IGN"}, rows).replace("\n", "\\n");
   }
 
@@ -150,6 +151,33 @@ public class DiscordUtils {
 
   private static void replaceColour(JsonObject tebex, double revenue, JsonObject discord) {
     String type = tebex.getString("type");
+
+    if (discord.containsKey("components")) {
+      JsonArray componentsArray = discord.getJsonArray("components");
+      if (componentsArray == null || componentsArray.isEmpty()) {
+        return;
+      }
+      for (Object components : componentsArray) {
+        if (!(components instanceof JsonObject component)) {
+          continue;
+        }
+
+        Integer color = component.getInteger("accent_color");
+        if (color != null && color != -1) {
+          continue;
+        }
+
+        component.put("accent_color", switch (type.toLowerCase(Locale.ROOT)) {
+          case "payment.completed", "recurring-payment.started" -> revenue > 0 ? convertColour(0, 255, 0) : convertColour(128, 128, 128);
+          case "payment.declined" -> convertColour(255, 150, 50);
+          case "payment.dispute.opened", "payment.dispute.lost", "recurring-payment.ended",
+               "recurring-payment.cancellation.requested" -> convertColour(255, 0, 0);
+          case "recurring-payment.renewed", "payment.dispute.won", "payment.dispute.closed", "recurring-payment.cancellation.aborted" -> convertColour(0, 255, 0);
+          default -> convertColour(128, 128, 128);
+        });
+      }
+    }
+
     JsonArray embedsArray = discord.getJsonArray("embeds");
     if (embedsArray == null || embedsArray.isEmpty()) {
       return;

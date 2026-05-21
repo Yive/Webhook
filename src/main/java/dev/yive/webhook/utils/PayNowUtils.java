@@ -35,6 +35,30 @@ public class PayNowUtils {
 
   private static void replaceColour(JsonObject base, double revenue, JsonObject discord) {
     String type = base.getString("event_type");
+
+    if (discord.containsKey("components")) {
+      JsonArray componentsArray = discord.getJsonArray("components");
+      if (componentsArray == null || componentsArray.isEmpty()) {
+        return;
+      }
+      for (Object components : componentsArray) {
+        if (!(components instanceof JsonObject component)) {
+          continue;
+        }
+
+        Integer color = component.getInteger("accent_color");
+        if (color != null && color != -1) {
+          continue;
+        }
+
+        component.put("accent_color", switch (type.toLowerCase(Locale.ROOT)) {
+          case "on_order_completed", "on_subscription_activated", "on_subscription_renewed" -> revenue > 0 ? DiscordUtils.convertColour(0, 255, 0) : DiscordUtils.convertColour(128, 128, 128);
+          case "on_refund" -> DiscordUtils.convertColour(255, 150, 50);
+          default -> DiscordUtils.convertColour(128, 128, 128);
+        });
+      }
+    }
+
     JsonArray embedsArray = discord.getJsonArray("embeds");
     if (embedsArray == null || embedsArray.isEmpty()) {
       return;
@@ -96,7 +120,7 @@ public class PayNowUtils {
       DiscordUtils.truncate(product.containsKey("product") ? product.getJsonObject("product") : product, rows, i);
     }
 
-    // Special characters in the pack will break the column width. I ain't fixing that.
+    // Special characters in the package will break the column width. I ain't fixing that.
     return FlipTable.of(new String[]{"#", "Package", "IGN"}, rows).replace("\n", "\\n");
   }
 }

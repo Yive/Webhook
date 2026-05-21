@@ -3,17 +3,17 @@ import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 plugins {
   java
   application
-  id("com.gradleup.shadow") version "9.2.2"
+  id("com.gradleup.shadow") version "9.4.1"
 }
 
 group = "dev.yive"
-version = "2.1.2"
+version = "2.1.3"
 
 repositories {
   mavenCentral()
 }
 
-val vertxVersion = "5.0.5"
+val vertxVersion = "5.0.12"
 
 val mainVerticleName = "dev.yive.webhook.MainVerticle"
 val launcherClassName = "io.vertx.launcher.application.VertxApplication"
